@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // Fetch latest user profile data
-        AuthUserAPI.fetchUserData(userId: userId) { [weak self] result in
+        UserAPI.fetchUserData(userId: userId) { [weak self] result in
             guard let self = self else { return }
             
             if case .success(let userResponse) = result {
