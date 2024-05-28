@@ -1,8 +1,8 @@
 //
 //  UserScreen.swift
-//  InstagramTransition
+//  Audition
 //
-//  Created by decoherence on 5/12/24.
+//  Created by decoherence on 5/27/24.
 //
 
 import UIKit
@@ -25,15 +25,11 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
     
         // Fetch up to date data
-        AuthUserAPI.fetchUserData(userId: userId) { [weak self] result in
+        UserAPI.fetchUserData(userId: userId) { [weak self] result in
             switch result {
             case .success(let userResponse):
                 self?.userData = userResponse.data
                 print("found user \(userResponse.data)")
-                
-                DispatchQueue.main.async {
-                           self?.setupEssentials()
-                       }
             case .failure(let error):
                 print("Error fetching user data: \(error.localizedDescription)")
             }
@@ -51,8 +47,6 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         setupView()
         setupScrollView()
         setupAvatar()
-        setupMetaData()
-        setupCards()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -99,21 +93,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             print("Invalid image URL")
         }
     }
-    
-    private func extractAndDisplayDominantColor() {
-            guard let image = avatarImage.image else { 
-                print("failed")
-                return }
-            
-            dominantColor(from: image) { [weak self] color in
-                guard let self = self, let color = color else { return }
-                
-                DispatchQueue.main.async {
-                    let hexString = color.toHexString()
-                    self.setupBlurEffect(with: hexString)
-                }
-            }
-        }
+
     
     
     private func setupBlurEffect(with color: String) {
@@ -122,35 +102,51 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         circleHost.view.backgroundColor = .clear
         circleHost.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(circleHost.view)
-        
+
         let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(blurEffectView)
-        
+
         let avatarSize: CGFloat = 70
         avatarImage.layer.cornerRadius = avatarSize / 2
         avatarImage.clipsToBounds = true
         avatarImage.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(avatarImage)
-        
+
+        let avatarContainerView = UIView(frame: CGRect(x: 0, y: 0, width: avatarSize, height: avatarSize))
+        avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
+        avatarContainerView.addSubview(avatarImage)
+
+        // Adjust the shadow properties to make the item appear even higher
+        avatarContainerView.layer.shadowColor = UIColor.black.cgColor
+        avatarContainerView.layer.shadowOpacity = 0.3
+        avatarContainerView.layer.shadowOffset = CGSize(width: 0, height: 16)
+        avatarContainerView.layer.shadowRadius = 24
+
+        contentView.addSubview(avatarContainerView)
+
         NSLayoutConstraint.activate([
             circleHost.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circleHost.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
+
             blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
             blurEffectView.leftAnchor.constraint(equalTo: view.leftAnchor),
             blurEffectView.rightAnchor.constraint(equalTo: view.rightAnchor),
             blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            avatarImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            avatarImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            avatarImage.widthAnchor.constraint(equalToConstant: avatarSize),
-            avatarImage.heightAnchor.constraint(equalToConstant: avatarSize)
+
+            avatarContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            avatarContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            avatarContainerView.widthAnchor.constraint(equalToConstant: avatarSize),
+            avatarContainerView.heightAnchor.constraint(equalToConstant: avatarSize),
+
+            avatarImage.centerXAnchor.constraint(equalTo: avatarContainerView.centerXAnchor),
+            avatarImage.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor),
+            avatarImage.widthAnchor.constraint(equalTo: avatarContainerView.widthAnchor),
+            avatarImage.heightAnchor.constraint(equalTo: avatarContainerView.heightAnchor)
         ])
     }
     
     private func setupEssentials() {
-        let essentialSpacing: CGFloat = -32
+        let essentialSpacing: CGFloat = -40
         let essentialSize: CGFloat = 144
         
         for i in 0..<3 {
@@ -178,7 +174,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             essentialContainerView.addSubview(essentialImageView)
             contentView.addSubview(essentialContainerView)
             
-            let centerXOffset: CGFloat = i % 2 == 0 ? 48 : -48
+            let centerXOffset: CGFloat = i % 2 == 0 ? 56 : -56
             let rotationAngle: CGFloat = i % 2 == 0 ? 4 : -4
             
             essentialContainerView.transform = CGAffineTransform(rotationAngle: rotationAngle * .pi / 180)
@@ -187,7 +183,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
                 essentialContainerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: centerXOffset),
                 essentialContainerView.widthAnchor.constraint(equalToConstant: essentialSize),
                 essentialContainerView.heightAnchor.constraint(equalToConstant: essentialSize),
-                essentialContainerView.topAnchor.constraint(equalTo: i == 0 ? view.safeAreaLayoutGuide.topAnchor : contentView.subviews[contentView.subviews.count - 2].bottomAnchor, constant: i == 0 ? 0 : essentialSpacing),
+                essentialContainerView.topAnchor.constraint(equalTo: i == 0 ? view.safeAreaLayoutGuide.topAnchor : contentView.subviews[contentView.subviews.count - 2].bottomAnchor, constant: i == 0 ? 8 : essentialSpacing),
                 
                 essentialImageView.leadingAnchor.constraint(equalTo: essentialContainerView.leadingAnchor),
                 essentialImageView.trailingAnchor.constraint(equalTo: essentialContainerView.trailingAnchor),
@@ -198,9 +194,64 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
     }
    
     private func setupMetaData() {
+        let metadataStackView = UIStackView()
+        metadataStackView.axis = .vertical
+        metadataStackView.spacing = 8
+        metadataStackView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(metadataStackView)
+
+        let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: userData?.artifactsCount ?? "0")
+        let soundsStackView = createMetadataStackView(heading: "sounds", statistic: userData?.essentials.count.description ?? "0")
+        let followersStackView = createMetadataStackView(heading: "followers", statistic: userData?.followersCount ?? "0")
+
+        metadataStackView.addArrangedSubview(artifactsStackView)
+        metadataStackView.addArrangedSubview(soundsStackView)
+        metadataStackView.addArrangedSubview(followersStackView)
+
+        NSLayoutConstraint.activate([
+            metadataStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            metadataStackView.centerYAnchor.constraint(equalTo: avatarImage.centerYAnchor)
+        ])
     }
+}
+
+// MARK: Helpers
+extension UserScreen {
+    private func extractAndDisplayDominantColor() {
+            guard let image = avatarImage.image else {
+                print("failed")
+                return }
+            
+            dominantColor(from: image) { [weak self] color in
+                guard let self = self, let color = color else { return }
+                
+                DispatchQueue.main.async {
+                    let hexString = color.toHexString()
+                    self.setupBlurEffect(with: hexString)
+                    self.setupEssentials()
+                    self.setupMetaData()
+                }
+            }
+        }
     
-    private func setupCards() {
+    private func createMetadataStackView(heading: String, statistic: String) -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 4
+
+        let headingLabel = UILabel()
+        headingLabel.text = heading
+        headingLabel.font = UIFont.systemFont(ofSize: 13)
+        headingLabel.textColor = .white
+        stackView.addArrangedSubview(headingLabel)
+
+        let statisticLabel = UILabel()
+        statisticLabel.text = statistic
+        statisticLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        statisticLabel.textColor = .white
+        stackView.addArrangedSubview(statisticLabel)
+
+        return stackView
     }
     
     private func checkImageSet(completion: @escaping () -> Void) {
