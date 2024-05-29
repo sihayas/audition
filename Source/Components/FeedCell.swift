@@ -22,6 +22,7 @@ class FeedCell: UICollectionViewCell {
     private var dialView: DialView?
     
     // MARK: Data
+    
     private var entry: APIEntry?
     
     // MARK: Init

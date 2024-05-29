@@ -14,7 +14,6 @@ struct DotView: View {
     @State private var scale: CGFloat = 1.0
     @State private var currentColor: Color
 
-    // Using computed properties for activeColor and inactiveColor
     private var activeColor: Color {
         colorScheme == .dark ? Color.white.opacity(0.5) : Color.black
     }
@@ -45,7 +44,7 @@ struct DotView: View {
     private func isLoadingUpdated(newValue: Bool) {
         withAnimation {
             currentColor = newValue ? activeColor : inactiveColor
-            scale = 1.0 // Reset the scale to its original value
+            scale = 1.0
         }
     }
     

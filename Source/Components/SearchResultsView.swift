@@ -55,19 +55,18 @@ struct SearchResultsView: View {
         }
         .sheet(item: $showingDetailsFor) { detailResult in
             if #available(iOS 16.4, *) {
-                FormSheetView(id: detailResult.resultId(), title: detailResult.title(), artistName: detailResult.subtitle(), artworkURL: detailResult.imageUrl(size: 1000))
+                FormSheetWrapper(sound: detailResult, artworkURL: detailResult.imageUrl(size: 1000))
                     .presentationBackground(.ultraThinMaterial)
                     .onAppear {
                          UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                      }
-            } else {
-                // Fallback for earlier iOS versions
             }
         }
         .background(Color.clear)
         .listStyle(PlainListStyle())
     }
 }
+
 
 extension SearchModel.SearchResult {
     

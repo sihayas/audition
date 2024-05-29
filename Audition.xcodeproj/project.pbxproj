@@ -42,7 +42,7 @@
 		CD44F67F2C05168E0021DE21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F67C2C05168E0021DE21 /* APIClient.swift */; };
 		CD44F6802C05168E0021DE21 /* SearchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F67D2C05168E0021DE21 /* SearchAPI.swift */; };
 		CD44F68A2C0516C00021DE21 /* FormSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6852C0516BF0021DE21 /* FormSheetView.swift */; };
-		CD44F68B2C0516C00021DE21 /* DIalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6862C0516BF0021DE21 /* DIalView.swift */; };
+		CD44F68B2C0516C00021DE21 /* DialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6862C0516BF0021DE21 /* DialView.swift */; };
 		CD44F68C2C0516C00021DE21 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6872C0516BF0021DE21 /* CircleView.swift */; };
 		CD44F68D2C0516C00021DE21 /* DashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6882C0516BF0021DE21 /* DashView.swift */; };
 		CD44F68E2C0516C00021DE21 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6892C0516BF0021DE21 /* FeedCell.swift */; };
@@ -102,7 +102,7 @@
 		CD44F67C2C05168E0021DE21 /* APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		CD44F67D2C05168E0021DE21 /* SearchAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchAPI.swift; sourceTree = "<group>"; };
 		CD44F6852C0516BF0021DE21 /* FormSheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormSheetView.swift; sourceTree = "<group>"; };
-		CD44F6862C0516BF0021DE21 /* DIalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DIalView.swift; sourceTree = "<group>"; };
+		CD44F6862C0516BF0021DE21 /* DialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DialView.swift; sourceTree = "<group>"; };
 		CD44F6872C0516BF0021DE21 /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		CD44F6882C0516BF0021DE21 /* DashView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashView.swift; sourceTree = "<group>"; };
 		CD44F6892C0516BF0021DE21 /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
@@ -196,7 +196,7 @@
 				CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */,
 				CD44F6872C0516BF0021DE21 /* CircleView.swift */,
 				CD44F6882C0516BF0021DE21 /* DashView.swift */,
-				CD44F6862C0516BF0021DE21 /* DIalView.swift */,
+				CD44F6862C0516BF0021DE21 /* DialView.swift */,
 				CD44F6892C0516BF0021DE21 /* FeedCell.swift */,
 				CD44F6852C0516BF0021DE21 /* FormSheetView.swift */,
 				C1765B9F2A6BED5000F65D7E /* ImageView */,
@@ -420,7 +420,7 @@
 				CD3154892BEB02350020968E /* SearchResultsView.swift in Sources */,
 				C1765BA32A6BED5E00F65D7E /* ImageMemoryCache.swift in Sources */,
 				C1765B8C2A6BDCD900F65D7E /* LayoutSizeDimension.swift in Sources */,
-				CD44F68B2C0516C00021DE21 /* DIalView.swift in Sources */,
+				CD44F68B2C0516C00021DE21 /* DialView.swift in Sources */,
 				CD44F6792C05167D0021DE21 /* FeedScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -64,11 +64,27 @@ class SearchModel: ObservableObject {
         }
 }
 
-extension SearchModel.SearchResult: Identifiable {
-    var id: Int {
-        var hasher = Hasher()
-        self.hash(into: &hasher)
-        return hasher.finalize()
+extension SearchModel.SearchResult: Soundable, Identifiable {
+    var id: String {
+        switch self {
+        case .song(let song):
+            return song.id
+        case .album(let album):
+            return album.id
+        case .user(let user):
+            return user.id
+        }
+    }
+
+    var type: String {
+        switch self {
+        case .song:
+            return "song"
+        case .album:
+            return "album"
+        case .user:
+            return "user"
+        }
     }
 }
 
@@ -78,8 +94,13 @@ struct SearchAPIResponse: Codable, Hashable {
     let users: [UserResult]
 }
 
+protocol Soundable {
+    var id: String { get }
+    var type: String { get }
+}
+
 // MARK: - Album
-struct Album: Codable, Identifiable, Hashable {
+struct Album: Codable, Identifiable, Hashable, Soundable {
     let attributes: AlbumAttributes
     let id: String
     let relationships: AlbumRelationships?
@@ -139,7 +160,7 @@ struct Tracks: Codable, Hashable {
 }
 
 // MARK: - Song
-struct Song: Codable, Identifiable, Hashable {
+struct Song: Codable, Identifiable, Hashable, Soundable {
     let attributes: SongAttributes
     let href: String
     let id: String

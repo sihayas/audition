@@ -1,87 +1,120 @@
+import UIKit
 import SwiftUI
 
-struct FormSheetView: View {
-    
-    var id: String
-    var title: String
-    var artistName: String
+struct FormSheetWrapper<Sound: Soundable>: UIViewControllerRepresentable {
+    var sound: Sound
     var artworkURL: URL?
     
-    @State private var appear = false
-    @State private var formData = ""
-    @State private var textEditorHeight: CGFloat = 40
-
-    var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                ZStack {
-                    AsyncImage(url: artworkURL) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: geometry.size.width * 0.8, height: 350)
-                                .cornerRadius(20)
-                                .scaleEffect(calculateScaleEffect(totalHeight: geometry.size.height))
-                                .opacity(appear ? 1 : 0)
-                                .blur(radius: appear ? 0 : 16)
-                                .rotationEffect(.degrees(appear ? -2 : 0))
-                                .animation(.spring(response: 1, dampingFraction: 1, blendDuration: 1), value: calculateScaleEffect(totalHeight: geometry.size.height))
-                                .onAppear {
-                                    withAnimation(.spring(response: 1, dampingFraction: 1, blendDuration: 1)) {
-                                        appear = true
-                                    }
-                                }
-                        case .empty, .failure:
-                            Color.clear
-                                .frame(width: geometry.size.width * 0.8, height: 350)
-                                .cornerRadius(20)
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                    .shadow(color: Color.black.opacity(0.8), radius: 20, x: 10, y: 10)
-                }
-                .frame(height: 350 * calculateScaleEffect(totalHeight: geometry.size.height))
-                .padding(.bottom, 32)
-                .animation(.spring(response: 1, dampingFraction: 1, blendDuration: 1), value: textEditorHeight)
-                
-                Text(artistName)
-                    .font(.system(size: 13))
-                    .foregroundColor(Color.white.opacity(0.75))
-                Text(title)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(Color.white.opacity(0.75))
-                
-                CustomTextEditor(text: $formData)
-                    .padding(.horizontal, 24)
-                    .frame(minHeight: 40, maxHeight: .infinity)
-                    .font(.system(size: 15))
-                    .onChange(of: formData) { _ in
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5)) {
-                            updateTextEditorHeight()
-                        }
-                    }
-                
-                Spacer()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        }
-        .padding(.top, 40)
+    func makeUIViewController(context: Context) -> FormSheetViewController<Sound> {
+        FormSheetViewController(sound: sound, artworkURL: artworkURL)
     }
     
-    private func updateTextEditorHeight() {
-        let size = CGSize(width: UIScreen.main.bounds.width - 64, height: .infinity)
-        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
-        let estimatedHeight = NSString(string: formData).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil).height
-        textEditorHeight = max(40, estimatedHeight)
-    }
+    func updateUIViewController(_ uiViewController: FormSheetViewController<Sound>, context: Context) {}
+}
 
-    private func calculateScaleEffect(totalHeight: CGFloat) -> CGFloat {
-        let initialHeight: CGFloat = 350
-        let minHeight: CGFloat = 100
-        let availableHeight = totalHeight - textEditorHeight - 200
-        let imageHeight = min(initialHeight, max(minHeight, availableHeight))
-        return imageHeight / initialHeight
+class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDelegate {
+    var sound: Sound
+    var artworkURL: URL?
+    
+    private let imageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
+    private let textView = UITextView()
+    
+    init(sound: Sound, artworkURL: URL?) {
+        self.sound = sound
+        self.artworkURL = artworkURL
+        super.init(nibName: nil, bundle: nil)
+        print("Sound instance: \(sound)")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+        
+        setupImageView()
+        setupLabels()
+        setupTextView()
+        layoutUI()
+        
+        if let url = artworkURL {
+            loadImage(from: url)
+        }
+    }
+    
+    private func setupImageView() {
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 20
+        imageView.clipsToBounds = true
+        view.addSubview(imageView)
+    }
+    
+    private func setupLabels() {
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        subtitleLabel.font = UIFont.systemFont(ofSize: 13)
+        subtitleLabel.textColor = UIColor.white.withAlphaComponent(0.75)
+        
+        view.addSubview(titleLabel)
+        view.addSubview(subtitleLabel)
+        
+        if let song = sound as? Song {
+            subtitleLabel.text = "sdjnjsad"
+            titleLabel.text = song.attributes.name
+        } else if let album = sound as? Album {
+            subtitleLabel.text = album.attributes.artistName
+            titleLabel.text = album.attributes.name
+        }
+    }
+    
+    private func setupTextView() {
+        textView.font = UIFont.systemFont(ofSize: 15)
+        textView.isScrollEnabled = false
+        textView.delegate = self
+        view.addSubview(textView)
+    }
+    
+    private func layoutUI() {
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            imageView.heightAnchor.constraint(equalToConstant: 350),
+            
+            subtitleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            titleLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 8),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            textView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        ])
+    }
+    
+    private func loadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            DispatchQueue.main.async {
+                self.imageView.image = UIImage(data: data)
+            }
+        }
+        task.resume()
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        UIView.animate(withDuration: 0.5) {
+            self.textView.invalidateIntrinsicContentSize()
+        }
     }
 }

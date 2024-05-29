@@ -111,8 +111,6 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         artView.setImage(from: details.imageUrl ?? URL(string: "")!)
-        artView.layer.cornerRadius = 32
-        artView.layer.cornerCurve = .continuous
         artView.clipsToBounds = true
         artView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -121,9 +119,9 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
 
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            containerView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            containerView.widthAnchor.constraint(equalToConstant: 382),
-            containerView.heightAnchor.constraint(equalToConstant: 382),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -60),
+            containerView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            containerView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
 
             artView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             artView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
@@ -145,13 +143,13 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
 
         let soundSubtitle = UILabel()
         soundSubtitle.translatesAutoresizingMaskIntoConstraints = false
-        soundSubtitle.font = .systemFont(ofSize: 19, weight: .regular)
+        soundSubtitle.font = .systemFont(ofSize: 13, weight: .regular)
         soundSubtitle.text = details.subtitle
         soundSubtitle.numberOfLines = 1
 
         let soundTitle = UILabel()
         soundTitle.translatesAutoresizingMaskIntoConstraints = false
-        soundTitle.font = .systemFont(ofSize: 23, weight: .bold)
+        soundTitle.font = .systemFont(ofSize: 15, weight: .bold)
         soundTitle.text = details.title
         soundTitle.numberOfLines = 1
 
@@ -174,14 +172,14 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
             stackView.topAnchor.constraint(equalTo: artView.bottomAnchor, constant: 24),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            ratingHost.view.widthAnchor.constraint(equalToConstant: 48),
-            ratingHost.view.heightAnchor.constraint(equalToConstant: 48),
+            ratingHost.view.widthAnchor.constraint(equalToConstant: 32),
+            ratingHost.view.heightAnchor.constraint(equalToConstant: 32),
         ])
         
         // statistics
         let artifactCountTitle = UILabel()
         artifactCountTitle.translatesAutoresizingMaskIntoConstraints = false
-        artifactCountTitle.font = .systemFont(ofSize: 15, weight: .regular)
+        artifactCountTitle.font = .systemFont(ofSize: 13, weight: .regular)
         artifactCountTitle.text = "artifacts"
         artifactCountTitle.numberOfLines = 1
         artifactCountTitle.alpha = 0.9
@@ -189,7 +187,7 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
 
         let artifactCount = UILabel()
         artifactCount.translatesAutoresizingMaskIntoConstraints = false
-        artifactCount.font = .systemFont(ofSize: 21, weight: .semibold)
+        artifactCount.font = .systemFont(ofSize: 15, weight: .semibold)
         artifactCount.text = "3478"
         artifactCount.numberOfLines = 1
         artifactCount.alpha = 0.9
@@ -197,7 +195,7 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
 
         let essentialCountTitle = UILabel()
         essentialCountTitle.translatesAutoresizingMaskIntoConstraints = false
-        essentialCountTitle.font = .systemFont(ofSize: 15, weight: .regular)
+        essentialCountTitle.font = .systemFont(ofSize: 13, weight: .regular)
         essentialCountTitle.text = "essentials"
         essentialCountTitle.numberOfLines = 1
         essentialCountTitle.alpha = 0.9
@@ -205,7 +203,7 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
 
         let essentialCount = UILabel()
         essentialCount.translatesAutoresizingMaskIntoConstraints = false
-        essentialCount.font = .systemFont(ofSize: 21, weight: .semibold)
+        essentialCount.font = .systemFont(ofSize: 15, weight: .semibold)
         essentialCount.text = "43"
         essentialCount.numberOfLines = 1
         essentialCount.alpha = 0.9
@@ -237,7 +235,7 @@ class SoundScreen: UIViewController, UIGestureRecognizerDelegate {
         cardView.transform = CGAffineTransform(rotationAngle: 4 * .pi / 180)
 
         NSLayoutConstraint.activate([
-            cardView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 24),
+            cardView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 40),
             cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -48),
             cardView.widthAnchor.constraint(equalToConstant: 216),
             cardView.heightAnchor.constraint(equalToConstant: 304)

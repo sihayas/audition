@@ -212,7 +212,20 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             metadataStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             metadataStackView.centerYAnchor.constraint(equalTo: avatarImage.centerYAnchor)
         ])
+        
+        let spacerView = UIView()
+        spacerView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(spacerView)
+
+        NSLayoutConstraint.activate([
+            spacerView.topAnchor.constraint(equalTo: metadataStackView.bottomAnchor),
+            spacerView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            spacerView.heightAnchor.constraint(equalToConstant: 500),
+            spacerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            spacerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
     }
+    
 }
 
 // MARK: Helpers
