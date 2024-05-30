@@ -1,8 +1,13 @@
 import UIKit
 import CoreData
 
+protocol SearchBarDelegate: AnyObject {
+    func searchBar(_ searchBar: NavBar, textDidChange searchText: String)
+}
+
 class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
     
+    weak var customDelegate: SearchBarDelegate?
     var user: User
     var searchModel: SearchModel?
     var searchScreen: SearchScreen?
@@ -10,6 +15,7 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
     
     private var isExpanded = false
     private var searchBarView: UIView?
+    private var searchBarBackgroundView: UIView?
     private var notificationButton: UIButton?
     private var avatarButton: UIButton?
     
@@ -64,7 +70,7 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
         blackView.layer.cornerRadius = 16
         blackView.layer.cornerCurve = .continuous
         blackView.clipsToBounds = true
-        blackView.backgroundColor = UIColor.black.withAlphaComponent(0.9)
+        blackView.backgroundColor = UIColor.black
         blackView.layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
         blackView.layer.borderWidth = 1
         
@@ -114,7 +120,7 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
         self.placeholder = "Arwen"
         self.backgroundImage = UIImage()
         self.searchTextField.backgroundColor = UIColor.clear
-        self.translatesAutoresizingMaskIntoConstraints = false
+//        self.translatesAutoresizingMaskIntoConstraints = false
         
         searchBarView = UIView()
         searchBarView?.translatesAutoresizingMaskIntoConstraints = false
@@ -123,18 +129,10 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
         searchBarView?.layer.shadowOpacity = 0.2
         searchBarView?.layer.shadowOffset = CGSize(width: 0, height: 2)
         searchBarView?.layer.shadowRadius = 4
+        searchBarView?.backgroundColor = .black
+        searchBarView?.layer.cornerRadius = 16
         
-        let blackView = UIView()
-        blackView.translatesAutoresizingMaskIntoConstraints = false
-        blackView.layer.cornerRadius = 16
-        blackView.layer.cornerCurve = .continuous
-        blackView.clipsToBounds = true
-        blackView.backgroundColor = UIColor.black.withAlphaComponent(0.9)
-        blackView.layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
-        blackView.layer.borderWidth = 1
-        
-        blackView.addSubview(searchTextField)
-        searchBarView?.addSubview(blackView)
+        searchBarView?.addSubview(searchTextField)
         addSubview(searchBarView!)
         
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -144,17 +142,14 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
         heightConstraint = searchBarView?.heightAnchor.constraint(equalToConstant: 32)
         
         NSLayoutConstraint.activate([
+            leadingConstraint,
+            trailingConstraint,
+            heightConstraint,
+            
             searchTextField.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             searchTextField.leadingAnchor.constraint(equalTo: searchBarView!.leadingAnchor, constant: 8),
             searchTextField.trailingAnchor.constraint(equalTo: searchBarView!.trailingAnchor, constant: -8),
-            leadingConstraint,
-            trailingConstraint,
             searchBarView!.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            heightConstraint,
-            blackView.topAnchor.constraint(equalTo: searchBarView!.topAnchor),
-            blackView.leadingAnchor.constraint(equalTo: searchBarView!.leadingAnchor),
-            blackView.trailingAnchor.constraint(equalTo: searchBarView!.trailingAnchor),
-            blackView.bottomAnchor.constraint(equalTo: searchBarView!.bottomAnchor)
         ])
     }
 
@@ -209,6 +204,42 @@ class NavBar: UISearchBar, UISearchBarDelegate, UIGestureRecognizerDelegate {
     }
 
 }
+
+// MARK: Search
+
+extension NavBar {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch), object: nil)
+        self.perform(#selector(performSearch), with: nil, afterDelay: 0.25)
+    }
+    
+    func setSearchBarViewHeight(animated: Bool = true) {
+        guard let searchBarView = self.searchBarView else {
+            return
+        }
+        
+        let finalHeight: CGFloat = searchBarView.bounds.width
+        let finalCornerRadius: CGFloat = 16
+        
+        self.heightConstraint.constant = searchBarView.bounds.width
+        searchBarView.layer.cornerRadius = finalCornerRadius
+        
+        if animated {
+            UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
+                self.layoutIfNeeded()
+                self.searchTextField.becomeFirstResponder()
+            }, completion: nil)
+        } else {
+            self.layoutIfNeeded()
+            self.searchTextField.becomeFirstResponder()
+        }
+    }
+    
+    @objc private func performSearch() {
+        self.searchModel?.search(query: self.text ?? "")
+    }
+}
+
 
 // MARK: Animations/Gestures
 
@@ -374,15 +405,3 @@ extension NavBar {
     }
 }
 
-// MARK: Search
-
-extension NavBar {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch), object: nil)
-        self.perform(#selector(performSearch), with: nil, afterDelay: 0.25)
-    }
-    
-    @objc private func performSearch() {
-        self.searchModel?.search(query: self.text ?? "")
-    }
-}

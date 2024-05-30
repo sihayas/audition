@@ -26,3 +26,11 @@ class NavigationManager {
         navigationController?.pushViewController(userScreen, animated: true)
     }
 }
+
+class NavBarManager {
+    static let shared = NavBarManager()
+    
+    var navBar: NavBar?
+    
+    private init() {}
+}

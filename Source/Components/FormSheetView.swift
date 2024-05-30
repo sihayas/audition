@@ -12,7 +12,14 @@ struct FormSheetWrapper<Sound: Soundable>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: FormSheetViewController<Sound>, context: Context) {}
 }
 
-class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDelegate {
+class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDelegate, SearchBarDelegate {
+
+    func searchBar(_ searchBar: NavBar, textDidChange searchText: String) {
+        
+    }
+
+    
+    
     var sound: Sound
     var artworkURL: URL?
     
@@ -20,7 +27,8 @@ class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDel
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let textView = UITextView()
-    
+    private var dialView: DialView?
+
     init(sound: Sound, artworkURL: URL?) {
         self.sound = sound
         self.artworkURL = artworkURL
@@ -32,19 +40,40 @@ class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDel
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
+        if let navBar = NavBarManager.shared.navBar {
+            navBar.customDelegate = self
+        }
         
         setupImageView()
         setupLabels()
         setupTextView()
+        setupGesture()
         layoutUI()
         
         if let url = artworkURL {
             loadImage(from: url)
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if NavBarManager.shared.navBar?.setSearchBarViewHeight(animated: true) == nil {
+            print("NavBar instance not found")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+         super.viewWillDisappear(animated)
+         
+         if NavBarManager.shared.navBar?.setSearchBarViewHeight(animated: true) == nil {
+             print("NavBar instance not found")
+         }
+     }
+
     
     private func setupImageView() {
         imageView.contentMode = .scaleAspectFill
@@ -74,6 +103,7 @@ class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDel
         textView.font = UIFont.systemFont(ofSize: 15)
         textView.isScrollEnabled = false
         textView.delegate = self
+        textView.backgroundColor = .clear
         view.addSubview(textView)
     }
     
@@ -115,6 +145,90 @@ class FormSheetViewController<Sound: Soundable>: UIViewController, UITextViewDel
     func textViewDidChange(_ textView: UITextView) {
         UIView.animate(withDuration: 0.5) {
             self.textView.invalidateIntrinsicContentSize()
+        }
+    }
+    
+    private func setupGesture() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        longPressGesture.minimumPressDuration = 0.25
+        imageView.addGestureRecognizer(longPressGesture)
+        imageView.isUserInteractionEnabled = true
+    }
+
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        let location = gesture.location(in: view)
+        switch gesture.state {
+        case .began:
+            showDial(at: location)
+        case .changed:
+            dialView?.updateSelectedAction(at: gesture.location(in: dialView))
+        case .ended:
+            if let selectedAction = dialView?.selectedAction {
+                performAction(selectedAction)
+            }
+            hideDial()
+        default:
+            break
+        }
+    }
+
+    private func animateDialIn(_ dial: DialView) {
+        dial.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        dial.alpha = 0
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 0.75,
+                       initialSpringVelocity: 1,
+                       options: .curveEaseInOut,
+                       animations: {
+                           dial.transform = .identity
+                           dial.alpha = 1
+                       },
+                       completion: nil)
+    }
+
+    private func showDial(at point: CGPoint) {
+        let dial = DialView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+        dial.center = point
+        view.addSubview(dial)
+        dialView = dial
+        animateDialIn(dial)
+    }
+
+    private func animateDialOut(_ dial: DialView, completion: @escaping () -> Void) {
+        UIView.animate(withDuration: 0.4,
+                       delay: 0,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 0,
+                       options: .curveEaseInOut,
+                       animations: {
+                           dial.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+                           dial.alpha = 0
+                       },
+                       completion: { _ in
+                           completion()
+                       })
+    }
+
+    private func hideDial() {
+        if let dial = dialView {
+            animateDialOut(dial) {
+                dial.removeFromSuperview()
+                self.dialView = nil
+            }
+        }
+    }
+
+    private func performAction(_ action: Int) {
+        switch action {
+        case 0:
+            print("Pin action selected")
+        case 1:
+            print("Save action selected")
+        case 2:
+            print("Share action selected")
+        default:
+            break
         }
     }
 }

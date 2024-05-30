@@ -92,6 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         let navBar = NavBar(user: user)
+        NavBarManager.shared.navBar = navBar
+        
         let searchScreen = SearchScreen()
         searchScreen.view.isHidden = true
         
