@@ -9,7 +9,7 @@ import Foundation
 
 class UserAPI {
     static func fetchUserData(userId: String, completion: @escaping (Result<UserResponse, Error>) -> Void) {
-        let baseURL = "http://192.168.1.249:8000"
+        let baseURL = "http://192.168.1.46:8000"
         let urlString = "\(baseURL)/api/user/?userId=\(userId)&pageUserId=\(userId)"
         
         guard let url = URL(string: urlString) else {

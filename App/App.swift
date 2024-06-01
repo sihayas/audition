@@ -1,17 +1,10 @@
-//
-//  igApp.swift
-//  InstagramTransition
-//
-//  Created by decoherence on 4/30/24.
 import UIKit
 import SwiftUI
 import CoreData
 
 class PassThroughWindow: UIWindow {
   override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-    // Get view from superclass.
     guard let hitView = super.hitTest(point, with: event) else { return nil }
-    // If the returned view is the `UIHostingController`'s view, ignore.
     return rootViewController?.view == hitView ? nil : hitView
   }
 }
@@ -32,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    // Set up the feed screen
+    
     func setupFeedScreen(user: User) {
         guard let userId = user.id else {
             return
@@ -47,18 +40,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navBar = NavBar(user: user)
         NavBarManager.shared.navBar = navBar
         
-        let searchScreen = SearchScreen()
-        searchScreen.modalPresentationStyle = .pageSheet
-        navBar.searchModel = searchScreen.searchModel
-        
-        searchScreen.onDismiss = { [weak self] in
-            self?.navigationController?.dismiss(animated: true, completion: {
-                NavBarManager.shared.navBar?.collapseSearchBar()
-            })
+        let searchModel = SearchModel()
+        var searchResultsView = SearchScreen(searchModel: searchModel)
+        searchResultsView.onDismiss = {
+            NavBarManager.shared.navBar?.collapseSearchBar()
         }
+        let hostingController = UIHostingController(rootView: searchResultsView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .pageSheet
+        navBar.searchModel = searchModel
         
         navBar.onPresentSearchScreen = { [weak self] in
-            self?.navigationController?.present(searchScreen, animated: true, completion: nil)
+            self?.navigationController?.present(hostingController, animated: true, completion: nil)
         }
         
         secondaryWindow = PassThroughWindow(frame: UIScreen.main.bounds)

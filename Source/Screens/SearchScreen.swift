@@ -1,76 +1,152 @@
 //
-//  SearchScreen.swift
+//  SearchResultsView.swift
 //  InstagramTransition
 //
 //  Created by decoherence on 5/7/24.
 //
 
-import UIKit
 import SwiftUI
-import Combine
 
-class SearchScreen: UIViewController {
+struct SearchScreen: View {
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var searchModel: SearchModel
+    @State private var showingDetailsFor: SearchModel.SearchResult?
     var onDismiss: (() -> Void)?
-    var searchModel = SearchModel()
-    private var cancellables: Set<AnyCancellable> = []
+    
+    private func dismissSheet() {
+          presentationMode.wrappedValue.dismiss()
+      }
+    var body: some View {
+        ZStack {
+            BlurredBackground()
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                HStack {
+                    Spacer()
+                    Button("Cancel") {
+                        dismissSheet()
+                    }
+                    .padding()
+                    .background(Color.clear)
+                }
+                
+                List(searchModel.searchResults, id: \.self) { result in
+                    Button(action: {
+                        let details = SoundScreenDetails(
+                            id: result.resultId(),
+                            title: result.title(),
+                            subtitle: result.subtitle(),
+                            imageUrl: result.imageUrl(size: 1000),
+                            color: result.color()
+                        )
+                        NavigationManager.shared.navigateToSoundScreen(withDetails: details)
+                    }) {
+                        HStack {
+                            AsyncImage(url: result.imageUrl(size: 96)) { image in
+                                image.resizable()
+                            } placeholder: {
+                                Color.gray
+                            }
+                            .frame(width: 48, height: 48)
+                            .cornerRadius(result.cornerRadius())
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(result.title())
+                                    .font(.system(size: 15, weight: .medium))
+                                Text(result.subtitle())
+                                    .font(.system(size: 13, weight: .regular))
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                NavBarManager.shared.setSelectedSearchResult(result)
+                            }) {
+                                Image(systemName: "ellipsis")
+                                    .foregroundColor(.gray)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                }
+                .background(Color.clear)
+                .listStyle(PlainListStyle())
+                .opacity(0.8)
+            }
+        }
+        .onDisappear {
+            onDismiss?()
+        }
+    }
+}
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupBlurEffect()
-        setupBindings()
-        addSwiftUIContent()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        onDismiss?()
-    }
-    
-    private func setupBlurEffect() {
+struct BlurredBackground: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIVisualEffectView {
         let blurEffect = UIBlurEffect(style: .systemChromeMaterialDark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        view.insertSubview(blurEffectView, at: 0)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        return blurView
+    }
+    
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
+}
 
-        NSLayoutConstraint.activate([
-            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurEffectView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            blurEffectView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+extension SearchModel.SearchResult {
+    
+    func resultId() -> String {
+        switch self {
+        case .song(let song): return song.id
+        case .album(let album): return album.id
+        case .user(let user): return user.id
+        }
+    }
+    
+    func title() -> String {
+        switch self {
+        case .song(let song): return song.attributes.name
+        case .album(let album): return album.attributes.name
+        case .user(let user): return user.username
+        }
     }
 
-    private func addSwiftUIContent() {
-        let searchResultsView = SearchResultsView(searchModel: searchModel)
-        let hostingController = UIHostingController(rootView: searchResultsView)
-        addChild(hostingController)
-        view.addSubview(hostingController.view)
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        hostingController.didMove(toParent: self)
+    func subtitle() -> String {
+        switch self {
+        case .song(let song): return song.attributes.artistName
+        case .album(let album): return album.attributes.artistName
+        case .user: return "User"
+        }
+    }
+    
+    func color() -> String {
+        switch self {
+        case .song(let song): return song.attributes.artwork.bgColor
+        case .album(let album): return album.attributes.artwork.bgColor
+        case .user: return ""
+        }
     }
 
-    private func setupBindings() {
-        searchModel.$searchResults
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                // No need to manually reload data, SwiftUI will handle it
-            }
-            .store(in: &cancellables)
-        
-        searchModel.$isLoading
-            .receive(on: DispatchQueue.main)
-            .sink { isLoading in
-//                print(isLoading ? "Loading..." : "Loading finished")
-            }
-            .store(in: &cancellables)
+    func imageUrl(size: Int) -> URL? {
+        switch self {
+        case .song(let song):
+            return URL(string: song.attributes.artwork.url.replacingOccurrences(of: "{w}x{h}bb.jpg", with: "\(size)x\(size)bb.jpg"))
+        case .album(let album):
+            return URL(string: album.attributes.artwork.url.replacingOccurrences(of: "{w}x{h}bb.jpg", with: "\(size)x\(size)bb.jpg"))
+        case .user(let user):
+            return user.image
+        }
+    }
+
+    func cornerRadius() -> CGFloat {
+        switch self {
+        case .album, .song: return 8
+        case .user: return 20
+        }
+    }
+
+    func isSongOrAlbum() -> Bool {
+        switch self {
+        case .song, .album: return true
+        default: return false
+        }
     }
 }

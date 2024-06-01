@@ -32,9 +32,8 @@
 		C1765BCA2A6DC27600F65D7E /* SharedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1765BC92A6DC27600F65D7E /* SharedTransitioning.swift */; };
 		C1765BCC2A6E930600F65D7E /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1765BCB2A6E930600F65D7E /* UIScrollView+Extensions.swift */; };
 		CD17709F2BE3CF2200C9BC8A /* AnimatedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */; };
-		CD3154892BEB02350020968E /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3154882BEB02350020968E /* SearchResultsView.swift */; };
+		CD3154892BEB02350020968E /* SearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3154882BEB02350020968E /* SearchScreen.swift */; };
 		CD44F6762C05167D0021DE21 /* SoundScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6712C05167D0021DE21 /* SoundScreen.swift */; };
-		CD44F6772C05167D0021DE21 /* SearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6722C05167D0021DE21 /* SearchScreen.swift */; };
 		CD44F6782C05167D0021DE21 /* EntryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6732C05167D0021DE21 /* EntryScreen.swift */; };
 		CD44F6792C05167D0021DE21 /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6742C05167D0021DE21 /* FeedScreen.swift */; };
 		CD44F67A2C05167D0021DE21 /* AuthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6752C05167D0021DE21 /* AuthScreen.swift */; };
@@ -92,9 +91,8 @@
 		C1765BC92A6DC27600F65D7E /* SharedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTransitioning.swift; sourceTree = "<group>"; };
 		C1765BCB2A6E930600F65D7E /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedTextView.swift; sourceTree = "<group>"; };
-		CD3154882BEB02350020968E /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
+		CD3154882BEB02350020968E /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
 		CD44F6712C05167D0021DE21 /* SoundScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundScreen.swift; sourceTree = "<group>"; };
-		CD44F6722C05167D0021DE21 /* SearchScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
 		CD44F6732C05167D0021DE21 /* EntryScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryScreen.swift; sourceTree = "<group>"; };
 		CD44F6742C05167D0021DE21 /* FeedScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedScreen.swift; sourceTree = "<group>"; };
 		CD44F6752C05167D0021DE21 /* AuthScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthScreen.swift; sourceTree = "<group>"; };
@@ -193,15 +191,14 @@
 		C1765B7C2A6BDBE500F65D7E /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				CD95916B2C0960CD00B3015C /* FormArtworkView.swift */,
 				CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */,
 				CD44F6872C0516BF0021DE21 /* CircleView.swift */,
 				CD44F6882C0516BF0021DE21 /* DashView.swift */,
 				CD44F6862C0516BF0021DE21 /* DialView.swift */,
 				CD44F6892C0516BF0021DE21 /* FeedCell.swift */,
+				CD95916B2C0960CD00B3015C /* FormArtworkView.swift */,
 				C1765B9F2A6BED5000F65D7E /* ImageView */,
 				CD67D5132BE98F230039A5D2 /* NavBarView.swift */,
-				CD3154882BEB02350020968E /* SearchResultsView.swift */,
 				CD550AB22BE12C670070109C /* StarRatingView.swift */,
 			);
 			path = Components;
@@ -236,7 +233,7 @@
 				CD44F6752C05167D0021DE21 /* AuthScreen.swift */,
 				CD44F6732C05167D0021DE21 /* EntryScreen.swift */,
 				CD44F6742C05167D0021DE21 /* FeedScreen.swift */,
-				CD44F6722C05167D0021DE21 /* SearchScreen.swift */,
+				CD3154882BEB02350020968E /* SearchScreen.swift */,
 				CD44F6712C05167D0021DE21 /* SoundScreen.swift */,
 				CD9591692C055DCD00B3015C /* UserScreen.swift */,
 			);
@@ -415,9 +412,8 @@
 				CD5762752C00E2890032F347 /* UserAPI.swift in Sources */,
 				CD44F68C2C0516C00021DE21 /* CircleView.swift in Sources */,
 				CD85093D2BF592AB0061B4F0 /* UITextView.swift in Sources */,
-				CD44F6772C05167D0021DE21 /* SearchScreen.swift in Sources */,
 				C1765BCA2A6DC27600F65D7E /* SharedTransitioning.swift in Sources */,
-				CD3154892BEB02350020968E /* SearchResultsView.swift in Sources */,
+				CD3154892BEB02350020968E /* SearchScreen.swift in Sources */,
 				C1765BA32A6BED5E00F65D7E /* ImageMemoryCache.swift in Sources */,
 				C1765B8C2A6BDCD900F65D7E /* LayoutSizeDimension.swift in Sources */,
 				CD44F68B2C0516C00021DE21 /* DialView.swift in Sources */,
