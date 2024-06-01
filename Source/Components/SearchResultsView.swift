@@ -42,8 +42,7 @@ struct SearchResultsView: View {
                     Spacer()
                     
                     Button(action: {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        showingDetailsFor = result
+                        NavBarManager.shared.setSelectedSearchResult(result)
                     }) {
                         Image(systemName: "ellipsis")
                             .foregroundColor(.gray)
@@ -52,15 +51,6 @@ struct SearchResultsView: View {
                 }
             }
             .listRowBackground(Color.clear)
-        }
-        .sheet(item: $showingDetailsFor) { detailResult in
-            if #available(iOS 16.4, *) {
-                FormSheetWrapper(sound: detailResult, artworkURL: detailResult.imageUrl(size: 1000))
-                    .presentationBackground(.ultraThinMaterial)
-                    .onAppear {
-                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                     }
-            }
         }
         .background(Color.clear)
         .listStyle(PlainListStyle())

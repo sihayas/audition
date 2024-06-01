@@ -41,7 +41,6 @@
 		CD44F67E2C05168E0021DE21 /* FeedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F67B2C05168E0021DE21 /* FeedAPI.swift */; };
 		CD44F67F2C05168E0021DE21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F67C2C05168E0021DE21 /* APIClient.swift */; };
 		CD44F6802C05168E0021DE21 /* SearchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F67D2C05168E0021DE21 /* SearchAPI.swift */; };
-		CD44F68A2C0516C00021DE21 /* FormSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6852C0516BF0021DE21 /* FormSheetView.swift */; };
 		CD44F68B2C0516C00021DE21 /* DialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6862C0516BF0021DE21 /* DialView.swift */; };
 		CD44F68C2C0516C00021DE21 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6872C0516BF0021DE21 /* CircleView.swift */; };
 		CD44F68D2C0516C00021DE21 /* DashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD44F6882C0516BF0021DE21 /* DashView.swift */; };
@@ -61,6 +60,7 @@
 		CD85093D2BF592AB0061B4F0 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD85093C2BF592AB0061B4F0 /* UITextView.swift */; };
 		CD9591682C0530E100B3015C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9591672C0530E100B3015C /* UserModel.swift */; };
 		CD95916A2C055DCD00B3015C /* UserScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9591692C055DCD00B3015C /* UserScreen.swift */; };
+		CD95916C2C0960CD00B3015C /* FormArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD95916B2C0960CD00B3015C /* FormArtworkView.swift */; };
 		CDA978F62BE10CBB002F3EA6 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA978F52BE10CBB002F3EA6 /* App.swift */; };
 		CDA979C92BE12705002F3EA6 /* FeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA979C82BE12705002F3EA6 /* FeedModel.swift */; };
 /* End PBXBuildFile section */
@@ -101,7 +101,6 @@
 		CD44F67B2C05168E0021DE21 /* FeedAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedAPI.swift; sourceTree = "<group>"; };
 		CD44F67C2C05168E0021DE21 /* APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		CD44F67D2C05168E0021DE21 /* SearchAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchAPI.swift; sourceTree = "<group>"; };
-		CD44F6852C0516BF0021DE21 /* FormSheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormSheetView.swift; sourceTree = "<group>"; };
 		CD44F6862C0516BF0021DE21 /* DialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DialView.swift; sourceTree = "<group>"; };
 		CD44F6872C0516BF0021DE21 /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		CD44F6882C0516BF0021DE21 /* DashView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashView.swift; sourceTree = "<group>"; };
@@ -122,6 +121,7 @@
 		CD85093C2BF592AB0061B4F0 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		CD9591672C0530E100B3015C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		CD9591692C055DCD00B3015C /* UserScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScreen.swift; sourceTree = "<group>"; };
+		CD95916B2C0960CD00B3015C /* FormArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormArtworkView.swift; sourceTree = "<group>"; };
 		CDA978F52BE10CBB002F3EA6 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = App.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		CDA979C82BE12705002F3EA6 /* FeedModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -193,12 +193,12 @@
 		C1765B7C2A6BDBE500F65D7E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				CD95916B2C0960CD00B3015C /* FormArtworkView.swift */,
 				CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */,
 				CD44F6872C0516BF0021DE21 /* CircleView.swift */,
 				CD44F6882C0516BF0021DE21 /* DashView.swift */,
 				CD44F6862C0516BF0021DE21 /* DialView.swift */,
 				CD44F6892C0516BF0021DE21 /* FeedCell.swift */,
-				CD44F6852C0516BF0021DE21 /* FormSheetView.swift */,
 				C1765B9F2A6BED5000F65D7E /* ImageView */,
 				CD67D5132BE98F230039A5D2 /* NavBarView.swift */,
 				CD3154882BEB02350020968E /* SearchResultsView.swift */,
@@ -399,11 +399,11 @@
 				CD44F6762C05167D0021DE21 /* SoundScreen.swift in Sources */,
 				C1765B8E2A6BDCD900F65D7E /* LayoutOperators.swift in Sources */,
 				C1765BBC2A6C7D7800F65D7E /* UIView+Extensions.swift in Sources */,
+				CD95916C2C0960CD00B3015C /* FormArtworkView.swift in Sources */,
 				CD67D4F32BE5B2C00039A5D2 /* UIColor.swift in Sources */,
 				C1765B922A6BDCD900F65D7E /* LayoutClosure.swift in Sources */,
 				CD44F6782C05167D0021DE21 /* EntryScreen.swift in Sources */,
 				C1765B932A6BDCD900F65D7E /* LayoutProxy.swift in Sources */,
-				CD44F68A2C0516C00021DE21 /* FormSheetView.swift in Sources */,
 				C1765BCC2A6E930600F65D7E /* UIScrollView+Extensions.swift in Sources */,
 				CD550AB52BE12C670070109C /* StarRatingView.swift in Sources */,
 				CD5761CE2BFF9BC70032F347 /* vaela.xcdatamodeld in Sources */,

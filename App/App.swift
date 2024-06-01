@@ -3,25 +3,69 @@
 //  InstagramTransition
 //
 //  Created by decoherence on 4/30/24.
-
 import UIKit
 import SwiftUI
 import CoreData
 
- 
+class PassThroughWindow: UIWindow {
+  override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    // Get view from superclass.
+    guard let hitView = super.hitTest(point, with: event) else { return nil }
+    // If the returned view is the `UIHostingController`'s view, ignore.
+    return rootViewController?.view == hitView ? nil : hitView
+  }
+}
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
+    var keyWindow: UIWindow?
+    var secondaryWindow: UIWindow?
     var navigationController: UINavigationController!
     var bottomConstraint: NSLayoutConstraint?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.backgroundColor = .black
+        keyWindow = UIWindow(frame: UIScreen.main.bounds)
+        keyWindow?.backgroundColor = .black
         
         digitize()
         
         return true
+    }
+    
+    // Set up the feed screen
+    func setupFeedScreen(user: User) {
+        guard let userId = user.id else {
+            return
+        }
+        
+        navigationController = UINavigationController(rootViewController: FeedScreen(userId: userId))
+        NavigationManager.shared.navigationController = navigationController
+        
+        keyWindow?.rootViewController = navigationController
+        keyWindow?.makeKeyAndVisible()
+        
+        let navBar = NavBar(user: user)
+        NavBarManager.shared.navBar = navBar
+        
+        let searchScreen = SearchScreen()
+        searchScreen.modalPresentationStyle = .pageSheet
+        navBar.searchModel = searchScreen.searchModel
+        
+        searchScreen.onDismiss = { [weak self] in
+            self?.navigationController?.dismiss(animated: true, completion: {
+                NavBarManager.shared.navBar?.collapseSearchBar()
+            })
+        }
+        
+        navBar.onPresentSearchScreen = { [weak self] in
+            self?.navigationController?.present(searchScreen, animated: true, completion: nil)
+        }
+        
+        secondaryWindow = PassThroughWindow(frame: UIScreen.main.bounds)
+        secondaryWindow?.rootViewController = UIViewController()
+        secondaryWindow?.rootViewController?.view.addSubview(navBar)
+        navBar.setupConstraints()
+        secondaryWindow?.isHidden = false
     }
 
     // Check for an auth session, if it exists get user data and log them in.
@@ -75,40 +119,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupAuthScreen() {
         navigationController = UINavigationController(rootViewController: AuthScreen())
         NavigationManager.shared.navigationController = navigationController
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-    }
-
-    // Set up the feed screen
-    func setupFeedScreen(user: User) {
-        guard let userId = user.id else {
-            return
-        }
-        
-        navigationController = UINavigationController(rootViewController: FeedScreen(userId: userId))
-        NavigationManager.shared.navigationController = navigationController
-        
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-        
-        let navBar = NavBar(user: user)
-        NavBarManager.shared.navBar = navBar
-        
-        let searchScreen = SearchScreen()
-        searchScreen.view.isHidden = true
-        
-        window?.addSubview(navBar)
-        window?.addSubview(searchScreen.view)
-        window?.bringSubviewToFront(navBar)
-        navBar.setupConstraints()
-        navBar.searchModel = searchScreen.searchModel
-        navBar.searchScreen = searchScreen
+        keyWindow?.rootViewController = navigationController
+        keyWindow?.makeKeyAndVisible()
     }
 
     func fetchAuthSession() -> Session? {
         let fetchRequest = NSFetchRequest<Session>(entityName: "Session")
         return try? CoreDataStack.shared.managedContext.fetch(fetchRequest).first
     }
-
 }
-

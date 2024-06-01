@@ -33,4 +33,18 @@ class NavBarManager {
     var navBar: NavBar?
     
     private init() {}
+    
+    func setSelectedSearchResult(_ result: SearchModel.SearchResult) {
+        selectedSearchResult = result
+    }
+    
+    var selectedSearchResult: SearchModel.SearchResult? {
+        didSet {
+            NotificationCenter.default.post(name: .selectedSearchResultDidChange, object: nil)
+        }
+    }
+}
+
+extension Notification.Name {
+    static let selectedSearchResultDidChange = Notification.Name("selectedSearchResultDidChange")
 }

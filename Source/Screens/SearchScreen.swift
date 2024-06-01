@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 
 class SearchScreen: UIViewController {
+    var onDismiss: (() -> Void)?
     var searchModel = SearchModel()
     private var cancellables: Set<AnyCancellable> = []
 
@@ -18,6 +19,11 @@ class SearchScreen: UIViewController {
         setupBlurEffect()
         setupBindings()
         addSwiftUIContent()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onDismiss?()
     }
     
     private func setupBlurEffect() {
