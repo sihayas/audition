@@ -249,7 +249,7 @@ extension AuthScreen: ASAuthorizationControllerDelegate, ASAuthorizationControll
                 return
             }
             
-            let baseURL = "http://192.168.1.46:8000"
+            let baseURL = "http://192.168.1.249:8000"
 
             let backendURL = URL(string: "\(baseURL)/_allauth/app/v1/auth/provider/token")!
             var request = URLRequest(url: backendURL)
@@ -332,13 +332,13 @@ extension AuthScreen: ASAuthorizationControllerDelegate, ASAuthorizationControll
                let userDict = data["user"] as? [String: Any],
                let meta = json["meta"] as? [String: Any],
                let sessionToken = meta["session_token"] as? String,
-               let userId = userDict["id"] as? Int {
-               print("Session Token: \(sessionToken), User ID: \(userId)")
+               let authUserId = userDict["id"] as? Int {
+               print("Session Token: \(sessionToken), User Data: \(userDict)")
                
                 DispatchQueue.main.async {
                     let session = Session(context: CoreDataStack.shared.managedContext)
                     session.sessionToken = sessionToken
-                    session.userId = String(userId)
+                    session.authUserId = String(authUserId)
                     
                     if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                         appDelegate.digitize()

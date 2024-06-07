@@ -21,7 +21,7 @@ struct ArtworkImageView: View {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 270, height: 270)
+                .frame(width: 332, height: 332)
                 .cornerRadius(18)
                 .blur(radius: blurRadius)
                 .rotation3DEffect(
@@ -37,11 +37,11 @@ struct ArtworkImageView: View {
             
             VStack {
                 Text(artistName)
-                    .font(.subheadline)
-                    .foregroundColor(.white).opacity(0.75)
+                    .foregroundColor(Color(UIColor.white))
+                    .font(.system(size: 13))
                 Text(albumName)
-                    .font(.headline)
-                    .foregroundColor(.white).opacity(0.75)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Color(UIColor.white))
             }
             .padding(.top, 8)
         }

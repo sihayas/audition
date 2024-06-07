@@ -44,9 +44,20 @@ class FeedCell: UICollectionViewCell {
     func setup(with entry: APIEntry) {
         self.entry = entry
         
-        artImage.setImage(from: entry.soundData.formattedArtworkUrl ?? URL(string: "")!)
-        avatarImage.setImage(from: entry.author.image ?? URL(string: "https://example.com/placeholder.png")!)
-        setupMetaData(artistText: entry.soundData.artistName, nameText: entry.soundData.name, rating: entry.rating)
+        if let artworkUrlString = entry.sound.appleData?.artworkUrl {
+            let width = 600
+            let height = 600
+            guard let artworkUrl = URL(string: artworkUrlString.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return }
+            artImage.setImage(from: artworkUrl)
+        }
+        
+        if let avatarUrl = URL(string: entry.author.image) {
+            avatarImage.setImage(from: avatarUrl)
+        } else {
+            avatarImage.setImage(from: URL(string: "https://example.com/placeholder.png")!)
+        }
+        
+        setupMetaData(artistText: entry.sound.appleData?.artistName ?? "", nameText: entry.sound.appleData?.name ?? "", rating: entry.rating ?? 0)
         setupAttribution(username: entry.author.username)
     }
     
@@ -54,13 +65,13 @@ class FeedCell: UICollectionViewCell {
     @objc private func avatarTapped() {
         print("tapped")
         guard let entry = entry else { return }
-//        let details = UserScreenDetails (
+//        let details = User (
 //            id: entry.author.id,
 //            username: entry.author.username,
 //            image: entry.author.image ?? URL(string: "https://example.com/placeholder.png")!,
 //            essentials: entry.author.essentials
 //        )
-//        NavigationManager.shared.navigateToUserScreen(withDetails: details)
+//        NavigationManager.shared.navigateToUserScreen(withDetails: entry.author)
     }
 }
 
@@ -130,8 +141,8 @@ extension FeedCell {
         NSLayoutConstraint.activate([
             artImage.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 0),
             artImage.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 0),
-            artImage.widthAnchor.constraint(equalToConstant: 256),
-            artImage.heightAnchor.constraint(equalToConstant: 256)
+            artImage.widthAnchor.constraint(equalToConstant: 232),
+            artImage.heightAnchor.constraint(equalToConstant: 232)
         ])
     }
 
@@ -189,13 +200,13 @@ extension FeedCell {
     }
     
     private func setupAttribution(username: String) {
-        let borderSize: CGFloat = 4
+        let borderSize: CGFloat = 1
         let avatarSize: CGFloat = 40
 
         let containerView = UIView()
         containerView.layer.cornerRadius = (avatarSize / 2) + borderSize
         containerView.layer.borderWidth = borderSize
-        containerView.layer.borderColor = UIColor.systemGray6.cgColor
+        containerView.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         avatarImage.layer.cornerRadius = avatarSize / 2
@@ -221,7 +232,7 @@ extension FeedCell {
             avatarImage.widthAnchor.constraint(equalToConstant: avatarSize),
             avatarImage.heightAnchor.constraint(equalToConstant: avatarSize),
             
-            containerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            containerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -48),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             containerView.widthAnchor.constraint(equalToConstant: avatarSize + 2 * borderSize),
             containerView.heightAnchor.constraint(equalToConstant: avatarSize + 2 * borderSize),

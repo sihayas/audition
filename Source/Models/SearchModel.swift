@@ -99,6 +99,46 @@ protocol Soundable {
     var type: String { get }
 }
 
+struct SimpleSoundable: Hashable, Encodable {
+    let appleId: String
+    let name: String
+    let artistName: String
+    let releaseDate: String
+    let identifier: String
+    let type: String
+    let albumName: String?
+    
+    init(searchResult: SearchModel.SearchResult) {
+        switch searchResult {
+        case .song(let song):
+            appleId = song.id
+            name = song.attributes.name
+            artistName = song.attributes.artistName
+            releaseDate = song.attributes.releaseDate
+            identifier = song.attributes.isrc
+            type = "songs"
+            albumName = song.attributes.albumName
+        case .album(let album):
+            appleId = album.id
+            name = album.attributes.name
+            artistName = album.attributes.artistName
+            releaseDate = album.attributes.releaseDate
+            identifier = album.attributes.upc
+            type = "albums"
+            albumName = nil
+        case .user:
+            // Handle user case if needed
+            appleId = ""
+            name = ""
+            artistName = ""
+            releaseDate = ""
+            identifier = ""
+            type = "User"
+            albumName = nil
+        }
+    }
+}
+
 // MARK: - Album
 struct Album: Codable, Identifiable, Hashable, Soundable {
     let attributes: AlbumAttributes

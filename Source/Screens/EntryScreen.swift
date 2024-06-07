@@ -65,11 +65,15 @@ class EntryScreen: UIViewController {
 
 extension EntryScreen {
     private func setupUI() {
+        guard let appleData = entry.sound.appleData else {
+            return
+        }
+        
         setupView()
         setupScrollView()
-        setupBlurEffect()
-        setupPlaceholderCard()
-        setupContent()
+        setupBlurEffect(appleData: appleData)
+        setupPlaceholderCard(appleData: appleData)
+        setupContent(appleData: appleData)
     }
     
 
@@ -99,9 +103,9 @@ extension EntryScreen {
         }
     }
     
-    private func setupBlurEffect() {
+    private func setupBlurEffect(appleData: APIAppleSoundData) {
         // blurred ambiance
-        let circleView = CircleView(hexColor: entry.soundData.artworkBgColor, width: 364, height: 364, startRadius: 0, endRadius: 364)
+        let circleView = CircleView(hexColor: appleData.artworkBgColor, width: 364, height: 364, startRadius: 0, endRadius: 364)
         circleHost = UIHostingController(rootView: circleView)
         guard let circleView = circleHost?.view else { return }
         circleView.backgroundColor = .clear
@@ -125,7 +129,7 @@ extension EntryScreen {
         ])
     }
     
-    private func setupPlaceholderCard() {
+    private func setupPlaceholderCard(appleData: APIAppleSoundData) {
         // setup card view
         cardView.then {
             contentView.addSubview($0)
@@ -144,9 +148,9 @@ extension EntryScreen {
         ).isActive = true
         
         // art
-        setupArt()
+        setupArt(appleData: appleData)
 
-        let artistTextView = AnimateTextOutView(fontSize: 19, text: entry.soundData.artistName, weight: .medium)
+        let artistTextView = AnimateTextOutView(fontSize: 19, text: appleData.artistName, weight: .medium)
         artistTextOutHost = UIHostingController(rootView: artistTextView)
         guard let artistView = artistTextOutHost?.view else { return }
         contentView.addSubview(artistView)
@@ -158,7 +162,7 @@ extension EntryScreen {
             artistView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -42)
         ])
         
-        let albumTextView = AnimateTextOutView(fontSize: 19, text: entry.soundData.name, weight: .bold)
+        let albumTextView = AnimateTextOutView(fontSize: 19, text: appleData.name, weight: .bold)
         albumTextOutHost = UIHostingController(rootView: albumTextView)
         guard let albumView = albumTextOutHost?.view else { return }
         contentView.addSubview(albumView)
@@ -173,7 +177,7 @@ extension EntryScreen {
     }
 
     
-    private func setupArt() {
+    private func setupArt(appleData: APIAppleSoundData) {
         // art shadow container
         let containerView = UIView()
         contentView.addSubview(containerView)
@@ -193,8 +197,13 @@ extension EntryScreen {
         // art
         containerView.addSubview(artView)
         artView.contentMode = .scaleAspectFit
-        artView.setImage(from: entry.soundData.formattedArtworkUrl ?? URL(string: "")!)
-        artView.layer.cornerRadius = 21
+        
+        let width = 600
+        let height = 600
+        guard let artworkUrl = URL(string: appleData.artworkUrl.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return }
+        artView.setImage(from: artworkUrl)
+        
+        artView.layer.cornerRadius = 32
         artView.layer.cornerCurve = .continuous
         artView.layer.masksToBounds = true
         artView.translatesAutoresizingMaskIntoConstraints = false
@@ -209,7 +218,7 @@ extension EntryScreen {
         // animate avatar and art
         contentView.layoutIfNeeded()
         
-        let translation = CGAffineTransform(translationX: -containerView.bounds.width * ((1 - 0.6593) / 2) - 8, y: -containerView.bounds.height * (1 - 0.6593) / 2)
+        let translation = CGAffineTransform(translationX: containerView.bounds.width * ((1 - 0.6593) / 2) - 8, y: -containerView.bounds.height * (1 - 0.6593) / 2)
         let scale = CGAffineTransform(scaleX: 0.6593, y: 0.6593)
 
         containerView.transform = CGAffineTransform.identity
@@ -224,8 +233,8 @@ extension EntryScreen {
     }
 
     
-    private func setupContent() {
-        let starRatingView = RatingView(rating: entry.rating)
+    private func setupContent(appleData: APIAppleSoundData) {
+        let starRatingView = RatingView(rating: entry.rating ?? 0)
         ratingHost = UIHostingController(rootView: starRatingView)
         guard let starRatingView = ratingHost?.view else { return }
         contentView.addSubview(starRatingView)
@@ -235,12 +244,12 @@ extension EntryScreen {
 
         NSLayoutConstraint.activate([
             starRatingView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 48),
-            starRatingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            starRatingView.widthAnchor.constraint(equalToConstant: 40),
-            starRatingView.heightAnchor.constraint(equalToConstant: 40)
+            starRatingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
+            starRatingView.widthAnchor.constraint(equalToConstant: 24),
+            starRatingView.heightAnchor.constraint(equalToConstant: 24)
         ])
         
-        let albumTextView = AnimateTextInView(fontSize: 15, text: entry.soundData.name, weight: .bold)
+        let albumTextView = AnimateTextInView(fontSize: 15, text: appleData.name, weight: .bold)
         albumTextInHost = UIHostingController(rootView: albumTextView)
         guard let albumTextView = albumTextInHost?.view else { return }
         contentView.addSubview(albumTextView)
@@ -249,11 +258,11 @@ extension EntryScreen {
         albumTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             albumTextView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: 256),
-            albumTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 288),
+            albumTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
             albumTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24)
         ])
         
-        let artistTextView = AnimateTextInView(fontSize: 13, text: entry.soundData.artistName, weight: .medium)
+        let artistTextView = AnimateTextInView(fontSize: 13, text: appleData.artistName, weight: .medium)
         artistTextInHost = UIHostingController(rootView: artistTextView)
         guard let artistTextView = artistTextInHost?.view else { return }
         contentView.addSubview(artistTextView)
@@ -262,7 +271,7 @@ extension EntryScreen {
         artistTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             artistTextView.bottomAnchor.constraint(equalTo: albumTextView.topAnchor, constant: 0),
-            artistTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 288),
+            artistTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
             artistTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24)
         ])
         
@@ -302,8 +311,12 @@ extension EntryScreen {
 
         let avatar = avatarView
         shadowContainer.addSubview(avatar)
-        let imageURL = entry.author.image ?? URL(string: "https://example.com/placeholder.png")!
-        avatar.setImage(from: imageURL)
+        let imageURL = entry.author.image
+        if let url = URL(string: imageURL) {
+            avatar.setImage(from: url)
+        } else {
+            avatar.image = UIImage(named: "placeholder")
+        }
         avatar.layer.cornerRadius = 20
         avatar.layer.borderColor = UIColor.systemGray6.cgColor
         avatar.layer.borderWidth = 2
@@ -340,7 +353,7 @@ extension EntryScreen {
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            bodyTextView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
+            bodyTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
             bodyTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             bodyTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             bodyTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0)

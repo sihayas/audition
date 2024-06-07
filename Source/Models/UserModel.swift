@@ -7,81 +7,60 @@
 
 import Foundation
 
-class UserModel: ObservableObject {
-    @Published var user: APIUser?
-    @Published var isLoading: Bool = false
-    @Published var error: Error?
-    
-    var userId: String = ""
-    
-    func fetchUserData() {
-        guard !isLoading else { return }
-        
-        isLoading = true
-        error = nil
-        
-        UserAPI.fetchUserData(userId: userId) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let response):
-                    print("Fetched user data")
-                    self.user = response.data
-                    self.isLoading = false
-                case .failure(let error):
-                    print("Error fetching user data: \(error.localizedDescription)")
-                    self.error = error
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-}
-
 struct UserResponse: Decodable {
     let data: APIUser
 }
 
-struct APIUser: Decodable {
+struct APIUser: Codable {
     let id: String
+    let image: String
     let username: String
     let bio: String
-    let image: String
-    let followersCount: String
-    let artifactsCount: String
-    let essentials: [APIEssential]
+    let essentialOne: APISound?
+    let essentialTwo: APISound?
+    let essentialThree: APISound?
+    let followersCount: Double
+    let artifactsCount: Double
     let isFollowingAtoB: Bool?
     let isFollowingBtoA: Bool?
-    
+
     enum CodingKeys: String, CodingKey {
-        case id, username, bio, image
+        case id, image, username, bio
+        case essentialOne = "essential_one"
+        case essentialTwo = "essential_two"
+        case essentialThree = "essential_three"
         case followersCount = "followers_count"
         case artifactsCount = "artifacts_count"
-        case essentials
         case isFollowingAtoB = "isFollowingAtoB"
         case isFollowingBtoA = "isFollowingBtoA"
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         id = try container.decode(String.self, forKey: .id)
+        image = try container.decode(String.self, forKey: .image)
         username = try container.decode(String.self, forKey: .username)
         bio = try container.decode(String.self, forKey: .bio)
-        image = try container.decode(String.self, forKey: .image)
-        followersCount = try container.decode(String.self, forKey: .followersCount)
-        artifactsCount = try container.decode(String.self, forKey: .artifactsCount)
-        
-        // Decode the essentials string decode it to an array of Essential
-        let essentialsString = try container.decode(String.self, forKey: .essentials)
-        if let data = essentialsString.data(using: .utf8) {
-            essentials = try JSONDecoder().decode([APIEssential].self, from: data)
-        } else {
-            essentials = []
-        }
-        
+        followersCount = try container.decode(Double.self, forKey: .followersCount)
+        artifactsCount = try container.decode(Double.self, forKey: .artifactsCount)
+
+        // Use decodeIfPresent for optional properties
         isFollowingAtoB = try container.decodeIfPresent(Bool.self, forKey: .isFollowingAtoB)
         isFollowingBtoA = try container.decodeIfPresent(Bool.self, forKey: .isFollowingBtoA)
+
+        essentialOne = try APIUser.decodeAPISound(from: container, forKey: .essentialOne)
+        essentialTwo = try APIUser.decodeAPISound(from: container, forKey: .essentialTwo)
+        essentialThree = try APIUser.decodeAPISound(from: container, forKey: .essentialThree)
+    }
+
+    private static func decodeAPISound(from container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> APISound? {
+        guard let stringValue = try container.decodeIfPresent(String.self, forKey: key),
+              !stringValue.isEmpty else {
+            return nil
+        }
+        
+        let data = stringValue.data(using: .utf8)!
+        return try JSONDecoder().decode(APISound.self, from: data)
     }
 }

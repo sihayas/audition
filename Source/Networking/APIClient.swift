@@ -17,9 +17,16 @@ class APIClient {
                 return
             }
             
-            guard let data = data else {
-                completion(.failure(NSError(domain: "APIClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "No data returned"])))
+            guard let data = data, !data.isEmpty else {
+                let missingDataError = NSError(domain: "APIClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Response data is missing"])
+                completion(.failure(missingDataError))
                 return
+            }
+            
+            // Print the JSON data as a string
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Received JSON:")
+                print(jsonString)
             }
             
             do {

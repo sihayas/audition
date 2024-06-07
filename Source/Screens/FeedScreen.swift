@@ -6,11 +6,12 @@ import CoreData
 class FeedScreen: UIViewController {
     private var userId: String?
     private var isLoading = false
-    private var viewModel = FeedModel()
+    private let feedAPI = FeedAPI()
     private var blurEffectView: UIVisualEffectView?
     private var circleViews: [IndexPath: UIView] = [:]
     
     init(userId: String) {
+        self.userId = userId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,14 +55,11 @@ class FeedScreen: UIViewController {
         observeLoading()
         
         if let userId = userId {
-            viewModel.userId = userId
-            viewModel.fetchEntries()
+            feedAPI.userId = userId
+            feedAPI.fetchEntries()
+        } else {
+            print("User ID is nil in FeedScreen")
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        navigationController?.delegate = self
     }
 }
 
@@ -72,13 +70,14 @@ extension FeedScreen {
     }
     
     private func observeEntries() {
-        viewModel.$entries.sink { [weak self] newEntries in
+        feedAPI.$entries.sink { [weak self] newEntries in
             self?.entries = newEntries
         }.store(in: &cancellables)
     }
+
     
     private func observeLoading() {
-        viewModel.$isLoading
+        feedAPI.$isLoading
             .sink { [weak self] isLoading in
                 self?.isLoading = isLoading
             }
@@ -116,8 +115,8 @@ extension FeedScreen {
         }
         
         let dashView = UIHostingController(rootView: DashView(isLoading: Binding(
-            get: { self.viewModel.isLoading },
-            set: { self.viewModel.isLoading = $0 }
+            get: { self.feedAPI.isLoading },
+            set: { self.feedAPI.isLoading = $0 }
         ))).view
          dashView?.backgroundColor = .clear
          dashView?.translatesAutoresizingMaskIntoConstraints = false
@@ -140,7 +139,6 @@ extension FeedScreen {
     
     private var cellProvider: DataSource.CellProvider {
         { [weak self] collectionView, indexPath, entry in
-            guard let self = self else { return nil }
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FeedCell", for: indexPath) as? FeedCell else {
                 fatalError("Cannot create new cell")
             }
@@ -153,23 +151,23 @@ extension FeedScreen {
             let circleFrame = CGRect(x: cellFrame.origin.x - 92, y: cellFrame.origin.y - 32, width: screenWidth, height: screenWidth)
 
             // Create a circle view if not already in dictionary.
-            if let circleView = self.circleViews[indexPath] {
+            if let circleView = self?.circleViews[indexPath] {
                 circleView.frame = circleFrame
             } else {
-                let circleView = CircleView(hexColor: entry.soundData.artworkBgColor, width: screenWidth, height: screenWidth, startRadius: 0, endRadius: screenWidth)
+                let circleView = CircleView(hexColor: entry.sound.appleData?.artworkBgColor ?? "#FFF", width: screenWidth, height: screenWidth, startRadius: 0, endRadius: screenWidth)
                 let circleHost = UIHostingController(rootView: circleView)
 
                 guard let circleHostView = circleHost.view else { return cell }
                 circleHostView.backgroundColor = .clear
                 circleHostView.isUserInteractionEnabled = false
 
-                if let blurEffectView = self.blurEffectView {
+                if let blurEffectView = self?.blurEffectView {
                     collectionView.insertSubview(circleHostView, belowSubview: blurEffectView)
                 }
                 circleHostView.frame = circleFrame
 
                 // Store the circle view in the dictionary
-                self.circleViews[indexPath] = circleHostView
+                self?.circleViews[indexPath] = circleHostView
             }
 
             return cell
@@ -188,7 +186,7 @@ extension FeedScreen: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == entries.count - 1 {
-            viewModel.fetchEntries()
+            feedAPI.fetchEntries()
         }
     }
 }
@@ -201,7 +199,7 @@ extension FeedScreen: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 256, height: 360)
+        return CGSize(width: 232, height: 328)
     }
 }
 

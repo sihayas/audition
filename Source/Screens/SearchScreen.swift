@@ -21,15 +21,6 @@ struct SearchScreen: View {
             BlurredBackground()
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                HStack {
-                    Spacer()
-                    Button("Cancel") {
-                        dismissSheet()
-                    }
-                    .padding()
-                    .background(Color.clear)
-                }
-                
                 List(searchModel.searchResults, id: \.self) { result in
                     Button(action: {
                         let details = SoundScreenDetails(
@@ -50,12 +41,13 @@ struct SearchScreen: View {
                             .frame(width: 48, height: 48)
                             .cornerRadius(result.cornerRadius())
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(result.title())
-                                    .font(.system(size: 15, weight: .medium))
+                            VStack(alignment: .leading) {
                                 Text(result.subtitle())
                                     .font(.system(size: 13, weight: .regular))
+                                Text(result.title())
+                                    .font(.system(size: 15, weight: .medium))
                             }
+                            .padding(.leading, 8)
                             
                             Spacer()
                             

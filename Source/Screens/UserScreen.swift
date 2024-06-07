@@ -25,7 +25,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
     
         // Fetch up to date data
-        UserAPI.fetchUserData(userId: userId) { [weak self] result in
+        UserAPI.fetchUserData(userId: userId, pageUserId: userId) { [weak self] result in
             switch result {
             case .success(let userResponse):
                 self?.userData = userResponse.data
@@ -148,15 +148,17 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
     private func setupEssentials() {
         let essentialSpacing: CGFloat = -40
         let essentialSize: CGFloat = 144
-        
-        for i in 0..<3 {
+
+        let essentials = [userData?.essentialOne, userData?.essentialTwo, userData?.essentialThree]
+
+        for (index, essential) in essentials.enumerated() {
             let essentialContainerView = UIView()
             essentialContainerView.translatesAutoresizingMaskIntoConstraints = false
             essentialContainerView.layer.shadowColor = UIColor.black.cgColor
             essentialContainerView.layer.shadowOpacity = 0.5
             essentialContainerView.layer.shadowOffset = CGSize(width: 0, height: 4)
             essentialContainerView.layer.shadowRadius = 6
-            
+
             let essentialImageView = UIImageView()
             essentialImageView.translatesAutoresizingMaskIntoConstraints = false
             essentialImageView.contentMode = .scaleAspectFill
@@ -164,27 +166,28 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             essentialImageView.layer.cornerCurve = .continuous
             essentialImageView.layer.cornerRadius = 20
             essentialImageView.backgroundColor = .black
-            
-            if let userData = userData,
-               let essential = userData.essentials.first(where: { $0.rank == i }),
-               let artworkURL = essential.soundData.formattedArtworkUrl {
-                essentialImageView.setImage(from: artworkURL)
+
+            if let artworkUrlString = essential?.appleData?.artworkUrl {
+                let width = Int(essentialSize)
+                let height = Int(essentialSize)
+                guard let artworkUrl = URL(string: artworkUrlString.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return  }
+                essentialImageView.setImage(from: artworkUrl)
             }
-            
+
             essentialContainerView.addSubview(essentialImageView)
             contentView.addSubview(essentialContainerView)
-            
-            let centerXOffset: CGFloat = i % 2 == 0 ? 56 : -56
-            let rotationAngle: CGFloat = i % 2 == 0 ? 4 : -4
-            
+
+            let centerXOffset: CGFloat = index % 2 == 0 ? 56 : -56
+            let rotationAngle: CGFloat = index % 2 == 0 ? 4 : -4
+
             essentialContainerView.transform = CGAffineTransform(rotationAngle: rotationAngle * .pi / 180)
-            
+
             NSLayoutConstraint.activate([
                 essentialContainerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: centerXOffset),
                 essentialContainerView.widthAnchor.constraint(equalToConstant: essentialSize),
                 essentialContainerView.heightAnchor.constraint(equalToConstant: essentialSize),
-                essentialContainerView.topAnchor.constraint(equalTo: i == 0 ? view.safeAreaLayoutGuide.topAnchor : contentView.subviews[contentView.subviews.count - 2].bottomAnchor, constant: i == 0 ? 8 : essentialSpacing),
-                
+                essentialContainerView.topAnchor.constraint(equalTo: index == 0 ? view.safeAreaLayoutGuide.topAnchor : contentView.subviews[contentView.subviews.count - 2].bottomAnchor, constant: index == 0 ? 8 : essentialSpacing),
+
                 essentialImageView.leadingAnchor.constraint(equalTo: essentialContainerView.leadingAnchor),
                 essentialImageView.trailingAnchor.constraint(equalTo: essentialContainerView.trailingAnchor),
                 essentialImageView.topAnchor.constraint(equalTo: essentialContainerView.topAnchor),
@@ -200,9 +203,9 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         metadataStackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(metadataStackView)
 
-        let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: userData?.artifactsCount ?? "0")
-        let soundsStackView = createMetadataStackView(heading: "sounds", statistic: userData?.essentials.count.description ?? "0")
-        let followersStackView = createMetadataStackView(heading: "followers", statistic: userData?.followersCount ?? "0")
+        let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: "0")
+        let soundsStackView = createMetadataStackView(heading: "sounds", statistic: "0")
+        let followersStackView = createMetadataStackView(heading: "followers", statistic: "0")
 
         metadataStackView.addArrangedSubview(artifactsStackView)
         metadataStackView.addArrangedSubview(soundsStackView)

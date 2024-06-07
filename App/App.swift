@@ -28,8 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func setupFeedScreen(user: User) {
         guard let userId = user.id else {
+            print("User ID is nil")
             return
         }
+        
+        print("User ID: \(userId)")
         
         navigationController = UINavigationController(rootViewController: FeedScreen(userId: userId))
         NavigationManager.shared.navigationController = navigationController
@@ -48,6 +51,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let hostingController = UIHostingController(rootView: searchResultsView)
         hostingController.view.backgroundColor = .clear
         hostingController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = hostingController.presentationController as?
+            UISheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
+        
         navBar.searchModel = searchModel
         
         navBar.onPresentSearchScreen = { [weak self] in
@@ -64,7 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Check for an auth session, if it exists get user data and log them in.
     func digitize() {
         guard let authSession = fetchAuthSession(),
-              let userId = authSession.userId,
               let authToken = authSession.sessionToken else {
             DispatchQueue.main.async {
                 self.setupAuthScreen()
@@ -72,21 +80,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
+        let authUserID = authSession.authUserId ?? ""
+        let userId = authSession.userId ?? ""
+        
         // Fetch latest user profile data
-        UserAPI.fetchUserData(userId: userId) { [weak self] result in
+        UserAPI.fetchAuthUserData(authUserId: authUserID) { [weak self] result in
             guard let self = self else { return }
             
             if case .success(let userResponse) = result {
                 let userData = userResponse.data
                 
+                print("User data from auth user response \(userData)")
+                
                 let fetchRequest = User.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "id == %@", userId)
+                fetchRequest.predicate = NSPredicate(format: "id == %@", userData.id)
                 
                 let user = (try? CoreDataStack.shared.managedContext.fetch(fetchRequest).first) ?? User(context: CoreDataStack.shared.managedContext)
                 user.id = userData.id
                 user.username = userData.username
                 user.bio = userData.bio
                 user.image = userData.image
+                user.followersCount = userData.followersCount
+                user.artifactsCount = userData.artifactsCount
+                
+                // Save the user.id to the Session Core Data entity using the authUserId if userId doesn't exist
+                if userId.isEmpty {
+                    authSession.userId = userData.id
+                }
                 
                 do {
                     try CoreDataStack.shared.managedContext.save()
@@ -94,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.setupFeedScreen(user: user)
                     }
                 } catch {
-                    print("Error saving User to Core Data: \(error.localizedDescription)")
+                    print("Error saving User and Session to Core Data: \(error.localizedDescription)")
                     DispatchQueue.main.async {
                         self.setupAuthScreen()
                     }
