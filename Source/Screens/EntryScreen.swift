@@ -114,7 +114,7 @@ extension EntryScreen {
         
         NSLayoutConstraint.activate([
             circleView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            circleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            circleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
 
         let blurEffect = UIBlurEffect(style: .systemThickMaterialDark)
@@ -218,7 +218,7 @@ extension EntryScreen {
         // animate avatar and art
         contentView.layoutIfNeeded()
         
-        let translation = CGAffineTransform(translationX: containerView.bounds.width * ((1 - 0.6593) / 2) - 8, y: -containerView.bounds.height * (1 - 0.6593) / 2)
+        let translation = CGAffineTransform(translationX: containerView.bounds.width * ((1 - 0.6593) / 2) - -8, y: -containerView.bounds.height * (1 - 0.6593) / 2)
         let scale = CGAffineTransform(scaleX: 0.6593, y: 0.6593)
 
         containerView.transform = CGAffineTransform.identity
@@ -234,22 +234,7 @@ extension EntryScreen {
 
     
     private func setupContent(appleData: APIAppleSoundData) {
-        let starRatingView = RatingView(rating: entry.rating ?? 0)
-        ratingHost = UIHostingController(rootView: starRatingView)
-        guard let starRatingView = ratingHost?.view else { return }
-        contentView.addSubview(starRatingView)
-        starRatingView.backgroundColor = .clear
-        starRatingView.alpha = 0.75
-        starRatingView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            starRatingView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 48),
-            starRatingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
-            starRatingView.widthAnchor.constraint(equalToConstant: 24),
-            starRatingView.heightAnchor.constraint(equalToConstant: 24)
-        ])
-        
-        let albumTextView = AnimateTextInView(fontSize: 15, text: appleData.name, weight: .bold)
+        let albumTextView = AnimateTextInView(fontSize: 15, text: appleData.name, weight: .semibold)
         albumTextInHost = UIHostingController(rootView: albumTextView)
         guard let albumTextView = albumTextInHost?.view else { return }
         contentView.addSubview(albumTextView)
@@ -275,20 +260,34 @@ extension EntryScreen {
             artistTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24)
         ])
         
+        let starRatingView = RatingView(rating: entry.rating ?? 0)
+        ratingHost = UIHostingController(rootView: starRatingView)
+        guard let starRatingView = ratingHost?.view else { return }
+        contentView.addSubview(starRatingView)
+        starRatingView.backgroundColor = .clear
+        starRatingView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            starRatingView.bottomAnchor.constraint(equalTo: artistTextView.topAnchor, constant: -8),
+            starRatingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
+            starRatingView.widthAnchor.constraint(equalToConstant: 20),
+            starRatingView.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
         // body text + avatar container
         // Outer view for shadow
         let shadowContainer = UIView()
         contentView.addSubview(shadowContainer)
         shadowContainer.backgroundColor = .clear
         shadowContainer.layer.shadowColor = UIColor.black.cgColor
-        shadowContainer.layer.shadowOffset = CGSize(width: 0, height: 4)
-        shadowContainer.layer.shadowOpacity = 0.1
-        shadowContainer.layer.shadowRadius = 2
+        shadowContainer.layer.shadowOffset = CGSize(width: 0, height: 2)
+        shadowContainer.layer.shadowOpacity = 0.3
+        shadowContainer.layer.shadowRadius = 4
         shadowContainer.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             shadowContainer.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 312),
-            shadowContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
+            shadowContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 40),
             shadowContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -28),
         ])
 
@@ -319,13 +318,13 @@ extension EntryScreen {
         }
         avatar.layer.cornerRadius = 20
         avatar.layer.borderColor = UIColor.systemGray6.cgColor
-        avatar.layer.borderWidth = 2
+        avatar.layer.borderWidth = 4
         avatar.layer.masksToBounds = true
         avatar.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            avatar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: -20),
-            avatar.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -20),
+            avatar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            avatar.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -24),
             avatar.widthAnchor.constraint(equalToConstant: 40),
             avatar.heightAnchor.constraint(equalToConstant: 40)
         ])
@@ -353,10 +352,10 @@ extension EntryScreen {
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            bodyTextView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            bodyTextView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             bodyTextView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             bodyTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            bodyTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0)
+            bodyTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
         
         avatar.alpha = 0

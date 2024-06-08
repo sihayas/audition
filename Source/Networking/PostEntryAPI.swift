@@ -13,7 +13,7 @@ class PostAPI {
         print("Rating: \(rating)")
         print("User ID: \(userId)")
         print("Soundable: \(sound)")
-        let urlString = "http://192.168.1.249:8000/api/post/"
+        let urlString = "http://192.168.1.23:8000/api/post/"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "PostAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))

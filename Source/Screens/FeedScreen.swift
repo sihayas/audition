@@ -22,7 +22,7 @@ class FeedScreen: UIViewController {
     
     // MARK: Constants
     private enum Constants {
-        static let lineSpacing: CGFloat = 64
+        static let lineSpacing: CGFloat = 96
         static let sectionInset: UIEdgeInsets = .init(top: 0, left: 173 - 128, bottom: 0, right: 0)
     }
     
@@ -72,8 +72,16 @@ extension FeedScreen {
     private func observeEntries() {
         feedAPI.$entries.sink { [weak self] newEntries in
             self?.entries = newEntries
+//            self?.printEntries(newEntries)
         }.store(in: &cancellables)
     }
+
+//    private func printEntries(_ entries: [APIEntry]) {
+//        print("Received entries:")
+//        for entry in entries {
+//            print("- \(entry)")
+//        }
+//    }
 
     
     private func observeLoading() {

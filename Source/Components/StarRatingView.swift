@@ -16,6 +16,7 @@ struct RatingView: View {
         HStack {
             ShapeForRating(rating: rating)
                 .foregroundColor(colorScheme == .dark ? .white : .black)
+                .opacity(0.75)
         }
     }
 

@@ -32,6 +32,11 @@ struct AvatarView: View {
                     }) {
                         Label("Alias", systemImage: "person.fill")
                     }
+                    Button(action: {
+                        print("Avatar")
+                    }) {
+                        Label("Avatar", systemImage: "photo.fill")
+                    }
                 }
                 
                 Section("Essentials") {

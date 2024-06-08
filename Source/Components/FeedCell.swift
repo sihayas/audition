@@ -36,8 +36,6 @@ class FeedCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-
 
     // MARK: Data
 
@@ -65,12 +63,6 @@ class FeedCell: UICollectionViewCell {
     @objc private func avatarTapped() {
         print("tapped")
         guard let entry = entry else { return }
-//        let details = User (
-//            id: entry.author.id,
-//            username: entry.author.username,
-//            image: entry.author.image ?? URL(string: "https://example.com/placeholder.png")!,
-//            essentials: entry.author.essentials
-//        )
 //        NavigationManager.shared.navigateToUserScreen(withDetails: entry.author)
     }
 }
@@ -156,13 +148,11 @@ extension FeedCell {
         ratingHost = UIHostingController(rootView: starRatingView)
         guard let starRatingViewView = ratingHost?.view else { return }
         starRatingViewView.backgroundColor = .clear
-        starRatingViewView.alpha = 0.75
         starRatingViewView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(starRatingViewView)
 
         let labelsStackView = UIStackView()
         labelsStackView.axis = .vertical
-        labelsStackView.spacing = 4
         labelsStackView.alignment = .trailing // Align items to the right
         labelsStackView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(labelsStackView)
@@ -232,7 +222,7 @@ extension FeedCell {
             avatarImage.widthAnchor.constraint(equalToConstant: avatarSize),
             avatarImage.heightAnchor.constraint(equalToConstant: avatarSize),
             
-            containerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -48),
+            containerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -60),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             containerView.widthAnchor.constraint(equalToConstant: avatarSize + 2 * borderSize),
             containerView.heightAnchor.constraint(equalToConstant: avatarSize + 2 * borderSize),

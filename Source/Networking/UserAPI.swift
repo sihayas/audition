@@ -9,7 +9,7 @@ import Foundation
 
 class UserAPI {
     static func fetchAuthUserData(authUserId: String, completion: @escaping (Result<UserResponse, Error>) -> Void) {
-        let urlString = "http://192.168.1.249:8000/api/user/auth/?authUserId=\(authUserId)"
+        let urlString = "http://192.168.1.23:8000/api/user/auth/?authUserId=\(authUserId)"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "AuthUserAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -28,7 +28,7 @@ class UserAPI {
     }
     
     static func fetchUserData(userId: String, pageUserId: String, completion: @escaping (Result<UserResponse, Error>) -> Void) {
-        let urlString = "http://192.168.1.249:8000/api/user/?userId=\(userId)&pageUserId=\(pageUserId)"
+        let urlString = "http://192.168.1.23:8000/api/user/?userId=\(userId)&pageUserId=\(pageUserId)"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "AuthUserAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
