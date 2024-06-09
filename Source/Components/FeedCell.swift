@@ -40,22 +40,20 @@ class FeedCell: UICollectionViewCell {
     // MARK: Data
 
     func setup(with entry: APIEntry) {
+        // Make sure apple sound data and entry are available
         self.entry = entry
-        
-        if let artworkUrlString = entry.sound.appleData?.artworkUrl {
-            let width = 600
-            let height = 600
-            guard let artworkUrl = URL(string: artworkUrlString.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return }
-            artImage.setImage(from: artworkUrl)
+        guard let appleData = entry.sound.appleData else {
+            return
         }
         
-        if let avatarUrl = URL(string: entry.author.image) {
-            avatarImage.setImage(from: avatarUrl)
-        } else {
-            avatarImage.setImage(from: URL(string: "https://example.com/placeholder.png")!)
-        }
+        guard let artworkUrl = URL(string: appleData.artworkUrl.replacingOccurrences(of: "{w}", with: "\(600)").replacingOccurrences(of: "{h}", with: "\(600)")) else { return }
+        artImage.setImage(from: artworkUrl)
+
         
-        setupMetaData(artistText: entry.sound.appleData?.artistName ?? "", nameText: entry.sound.appleData?.name ?? "", rating: entry.rating ?? 0)
+        guard let avatarUrl = URL(string: entry.author.image) else { return }
+        avatarImage.setImage(from: avatarUrl)
+        
+        setupMetaData(artistText: appleData.artistName, nameText: appleData.name, rating: entry.rating ?? 0)
         setupAttribution(username: entry.author.username)
     }
     
@@ -231,8 +229,6 @@ extension FeedCell {
             usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24)
         ])
     }
-
-
 }
 
 // MARK: Gestures
@@ -315,16 +311,31 @@ extension FeedCell {
         }
     }
 
+    
     private func performAction(_ action: Int) {
         switch action {
         case 0:
-            print("Pin action selected")
+            print("Create action selected")
         case 1:
-            print("Save action selected")
+            print("Go action selected")
         case 2:
-            print("Share action selected")
+            print("Heart action selected")
+            commitHeartAction()
         default:
             break
+        }
+    }
+    
+    private func commitHeartAction() {
+        guard let entry = entry else { return }
+        
+        PostAPI.createAction(authorId: entry.author.id, actionType: "heart", sourceId: entry.id, sourceType: "entry", soundId: entry.sound.id) { result in
+            switch result {
+            case .success:
+                print("Heart action committed successfully")
+            case .failure(let error):
+                print("Error committing heart action: \(error)")
+            }
         }
     }
 }

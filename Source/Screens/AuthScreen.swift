@@ -249,7 +249,7 @@ extension AuthScreen: ASAuthorizationControllerDelegate, ASAuthorizationControll
                 return
             }
             
-            let baseURL = "http://192.168.1.23:8000"
+            let baseURL = "http://192.168.1.249:8000"
 
             let backendURL = URL(string: "\(baseURL)/_allauth/app/v1/auth/provider/token")!
             var request = URLRequest(url: backendURL)

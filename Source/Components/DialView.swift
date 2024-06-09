@@ -6,9 +6,9 @@ class DialView: UIView {
     
     // Define actions with names and icons
     private let actions: [(name: String, icon: UIImage)] = [
-        ("Hide", UIImage(systemName: "eye.slash.fill")!.resized(to: CGSize(width: 16, height: 16))!),
-        ("Pin", UIImage(systemName: "pin.fill")!.resized(to: CGSize(width: 16, height: 16))!),
-        ("Share", UIImage(systemName: "square.and.arrow.up.fill")!.resized(to: CGSize(width: 16, height: 16))!)
+        ("Plus", UIImage(systemName: "plus")!.resized(to: CGSize(width: 16, height: 16))!),
+        ("Expand", UIImage(systemName: "arrow.up.right")!.resized(to: CGSize(width: 16, height: 16))!),
+        ("Heart", UIImage(systemName: "heart.fill")!.resized(to: CGSize(width: 16, height: 16))!)
     ]
     private var actionButtons: [UIButton] = []
     private let arcLayer = CAShapeLayer()
@@ -29,7 +29,7 @@ class DialView: UIView {
         
         // Configure arc background
         arcLayer.fillColor = UIColor.clear.cgColor
-        arcLayer.strokeColor = UIColor.systemGray6.cgColor
+        arcLayer.strokeColor = UIColor.black.cgColor
         arcLayer.lineWidth = 44
         arcLayer.lineCap = .round
         self.layer.addSublayer(arcLayer)
@@ -46,7 +46,7 @@ class DialView: UIView {
             button.tintColor = .white
             button.frame.size = CGSize(width: 32, height: 32)
             button.layer.cornerRadius = 16
-            button.backgroundColor = UIColor.systemGray5
+            button.backgroundColor = UIColor.clear
             button.addTarget(self, action: #selector(actionButtonTapped(_:)), for: .touchUpInside)
             self.addSubview(button)
             actionButtons.append(button)
@@ -148,9 +148,9 @@ class DialView: UIView {
         case 0:
             print("Hide action selected")
         case 1:
-            print("Pin action selected")
+            print("Add action selected")
         case 2:
-            print("Share action selected")
+            print("Heart action selected")
         default:
             break
         }

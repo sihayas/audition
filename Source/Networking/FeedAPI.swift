@@ -19,7 +19,7 @@ class FeedAPI: ObservableObject {
         guard !isLoading && canLoadMore else { return }
         isLoading = true
         
-        let urlString = "http://192.168.1.23:8000/api/feed?page=\(currentPage)&userId=\(userId)"
+        let urlString = "http://192.168.1.249:8000/api/feed?page=\(currentPage)&userId=\(userId)"
         print("URL String: \(urlString)")
         
         guard let url = URL(string: urlString) else {

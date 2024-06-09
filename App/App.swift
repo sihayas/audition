@@ -95,6 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let fetchRequest = User.fetchRequest()
                 fetchRequest.predicate = NSPredicate(format: "id == %@", userData.id)
                 
+                // Update stored user data with latest information.
                 let user = (try? CoreDataStack.shared.managedContext.fetch(fetchRequest).first) ?? User(context: CoreDataStack.shared.managedContext)
                 user.id = userData.id
                 user.username = userData.username

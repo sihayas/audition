@@ -9,7 +9,7 @@ import Foundation
 
 class SearchAPI {
     static func search(query: String, completion: @escaping (Result<SearchAPIResponse, Error>) -> Void) {
-        let urlString = "http://192.168.1.23:8000/api/search?query=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        let urlString = "http://192.168.1.249:8000/api/search?query=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "SearchAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
