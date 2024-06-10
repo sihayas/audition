@@ -22,8 +22,8 @@ class FeedScreen: UIViewController {
     
     // MARK: Constants
     private enum Constants {
-        static let lineSpacing: CGFloat = 96
-        static let sectionInset: UIEdgeInsets = .init(top: 0, left: 173 - 128, bottom: 0, right: 0)
+        static let lineSpacing: CGFloat = 128
+        static let sectionInset: UIEdgeInsets = .init(top: 0, left: 214 - 48, bottom: 0, right: 0)
     }
     
     // MARK: Typealiases
@@ -156,7 +156,7 @@ extension FeedScreen {
 
             let screenWidth = UIScreen.main.bounds.width
             let cellFrame = cell.frame
-            let circleFrame = CGRect(x: cellFrame.origin.x - 92, y: cellFrame.origin.y - 32, width: screenWidth, height: screenWidth)
+            let circleFrame = CGRect(x: cellFrame.origin.x - 184, y: cellFrame.origin.y - 64, width: screenWidth, height: screenWidth)
 
             // Create a circle view if not already in dictionary.
             if let circleView = self?.circleViews[indexPath] {
@@ -207,7 +207,7 @@ extension FeedScreen: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 232, height: 328)
+        return CGSize(width: 216, height: 304)
     }
 }
 

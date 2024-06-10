@@ -308,7 +308,7 @@ extension NavBar {
                                 let text = self.searchBar.text ?? ""
                                 let simpleSoundable = SimpleSoundable(searchResult: searchResult)
                                 
-                                PostAPI.submitPost(text: text, rating: self.rating, userId: userId, sound: simpleSoundable) { result in
+                                PostAPI.submitPost(text: text, rating: 1, userId: userId, sound: simpleSoundable) { result in
                                     DispatchQueue.main.async {
                                         if case .success = result {
                                             self.searchBar.text = ""
