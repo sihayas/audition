@@ -217,8 +217,12 @@ extension FeedScreen: UINavigationControllerDelegate {
                               animationControllerFor operation: UINavigationController.Operation,
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if fromVC is Self && toVC is EntryScreen || toVC is Self && fromVC is EntryScreen {
-            transitionAnimator.transition = (operation == .push ? .push : .pop)
+        if fromVC is Self, toVC is EntryScreen {
+            transitionAnimator.transition = .push
+            return transitionAnimator
+        }
+        if toVC is Self, fromVC is EntryScreen {
+            transitionAnimator.transition = .pop
             return transitionAnimator
         }
         return nil

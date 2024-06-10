@@ -57,8 +57,6 @@
 		CD67D5182BEA87640039A5D2 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD67D5172BEA87640039A5D2 /* SearchModel.swift */; };
 		CD6F0B162C10067E00FA67D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6F0B152C10067E00FA67D8 /* Assets.xcassets */; };
 		CD6F0B192C11706800FA67D8 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6F0B182C11706800FA67D8 /* AvatarView.swift */; };
-		CD6F0B1B2C16434600FA67D8 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6F0B1A2C16434600FA67D8 /* UIFont.swift */; };
-		CD85093D2BF592AB0061B4F0 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD85093C2BF592AB0061B4F0 /* UITextView.swift */; };
 		CD93DE572C0D1C9100E361B5 /* PostEntryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD93DE562C0D1C9100E361B5 /* PostEntryAPI.swift */; };
 		CD9591682C0530E100B3015C /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9591672C0530E100B3015C /* UserModel.swift */; };
 		CD95916A2C055DCD00B3015C /* UserScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9591692C055DCD00B3015C /* UserScreen.swift */; };
@@ -120,8 +118,6 @@
 		CD67D5172BEA87640039A5D2 /* SearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
 		CD6F0B152C10067E00FA67D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD6F0B182C11706800FA67D8 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
-		CD6F0B1A2C16434600FA67D8 /* UIFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIFont.swift; sourceTree = "<group>"; };
-		CD85093C2BF592AB0061B4F0 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		CD93DE562C0D1C9100E361B5 /* PostEntryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostEntryAPI.swift; sourceTree = "<group>"; };
 		CD9591672C0530E100B3015C /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		CD9591692C055DCD00B3015C /* UserScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScreen.swift; sourceTree = "<group>"; };
@@ -213,6 +209,7 @@
 		C1765B7F2A6BDC5000F65D7E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				CD6F0B1C2C16F2CC00FA67D8 /* Custom */,
 				C1765B992A6BE63000F65D7E /* CellReuse.swift */,
 				C1765BBF2A6C833100F65D7E /* CGAffineTransform+Extensions.swift */,
 				C104C83D2A6EC15500A8B322 /* CGRect+Extensions.swift */,
@@ -221,15 +218,10 @@
 				C1765B812A6BDC7100F65D7E /* Then.swift */,
 				C1765BBD2A6C800100F65D7E /* UIApplication+KeyWindow.swift */,
 				C1765BC32A6D74BE00F65D7E /* UICollectionView+Extensions.swift */,
-				CD67D4F22BE5B2C00039A5D2 /* UIColor.swift */,
 				CD54003D2BF6C7A700666F61 /* UIImage.swift */,
-				CD5762762C02A85C0032F347 /* UIImageView.swift */,
 				CD5762722C00DEE20032F347 /* UINavigationManager.swift */,
 				C1765BCB2A6E930600F65D7E /* UIScrollView+Extensions.swift */,
-				CD85093C2BF592AB0061B4F0 /* UITextView.swift */,
 				C1765BBB2A6C7D7800F65D7E /* UIView+Extensions.swift */,
-				CD5761522BFCD11F0032F347 /* VisionColor.swift */,
-				CD6F0B1A2C16434600FA67D8 /* UIFont.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -310,6 +302,16 @@
 				CD6F0B182C11706800FA67D8 /* AvatarView.swift */,
 			);
 			path = NavBar;
+			sourceTree = "<group>";
+		};
+		CD6F0B1C2C16F2CC00FA67D8 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				CD5762762C02A85C0032F347 /* UIImageView.swift */,
+				CD5761522BFCD11F0032F347 /* VisionColor.swift */,
+				CD67D4F22BE5B2C00039A5D2 /* UIColor.swift */,
+			);
+			path = Custom;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -410,7 +412,6 @@
 				C1765BA12A6BED5700F65D7E /* ImageCache.swift in Sources */,
 				C104C83E2A6EC15500A8B322 /* CGRect+Extensions.swift in Sources */,
 				C1765BAD2A6C4C8700F65D7E /* SharedTransitionAnimator.swift in Sources */,
-				CD6F0B1B2C16434600FA67D8 /* UIFont.swift in Sources */,
 				CD44F68D2C0516C00021DE21 /* DashView.swift in Sources */,
 				CD44F6762C05167D0021DE21 /* SoundScreen.swift in Sources */,
 				C1765B8E2A6BDCD900F65D7E /* LayoutOperators.swift in Sources */,
@@ -431,7 +432,6 @@
 				CD9591682C0530E100B3015C /* UserModel.swift in Sources */,
 				CD5762752C00E2890032F347 /* UserAPI.swift in Sources */,
 				CD44F68C2C0516C00021DE21 /* CircleView.swift in Sources */,
-				CD85093D2BF592AB0061B4F0 /* UITextView.swift in Sources */,
 				C1765BCA2A6DC27600F65D7E /* SharedTransitioning.swift in Sources */,
 				CD3154892BEB02350020968E /* SearchScreen.swift in Sources */,
 				C1765BA32A6BED5E00F65D7E /* ImageMemoryCache.swift in Sources */,
