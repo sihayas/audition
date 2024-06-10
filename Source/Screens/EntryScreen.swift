@@ -76,7 +76,6 @@ extension EntryScreen {
         setupContent(appleData: appleData)
     }
     
-
     private func setupView() {
         view.backgroundColor = .black
         view.addGestureRecognizer(recognizer)
@@ -127,6 +126,14 @@ extension EntryScreen {
             blurEffectView.rightAnchor.constraint(equalTo: view.rightAnchor),
             blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+
+        // Set initial alpha to 0 for the fade-in effect
+        blurEffectView.alpha = 0
+
+        // Perform the fade-in animation with a delay
+        UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseInOut) {
+            blurEffectView.alpha = 1
+        }
     }
     
     private func setupPlaceholderCard(appleData: APIAppleSoundData) {

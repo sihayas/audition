@@ -50,6 +50,7 @@ class FeedScreen: UIViewController {
     // MARK: View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
         setupUI()
         observeEntries()
         observeLoading()
@@ -60,6 +61,11 @@ class FeedScreen: UIViewController {
         } else {
             print("User ID is nil in FeedScreen")
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.delegate = self
     }
 }
 

@@ -11,14 +11,14 @@ class PassThroughWindow: UIWindow {
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    var keyWindow: UIWindow?
+    var window: UIWindow?
     var secondaryWindow: UIWindow?
     var navigationController: UINavigationController!
     var bottomConstraint: NSLayoutConstraint?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        keyWindow = UIWindow(frame: UIScreen.main.bounds)
-        keyWindow?.backgroundColor = .black
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.backgroundColor = .black
         
         digitize()
         
@@ -33,39 +33,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         
-        keyWindow?.makeKeyAndVisible()
+        window?.makeKeyAndVisible()
         navigationController = UINavigationController(rootViewController: FeedScreen(userId: userId))
         NavigationManager.shared.navigationController = navigationController
-        keyWindow?.rootViewController = navigationController
-//        
-//        let navBar = NavBar(user: user)
-//        NavBarManager.shared.navBar = navBar
-//        
-//        let searchModel = SearchModel()
-//        var searchResultsView = SearchScreen(searchModel: searchModel)
-//        searchResultsView.onDismiss = {
-//            NavBarManager.shared.navBar?.collapseSearchBar()
-//        }
-//        let hostingController = UIHostingController(rootView: searchResultsView)
-//        hostingController.view.backgroundColor = .clear
-//        hostingController.modalPresentationStyle = .pageSheet
-//        
-//        if let sheet = hostingController.presentationController as?
-//            UISheetPresentationController {
-//            sheet.prefersGrabberVisible = true
-//        }
-//        
-//        navBar.searchModel = searchModel
-//        
-//        navBar.onPresentSearchScreen = { [weak self] in
-//            self?.navigationController?.present(hostingController, animated: true, completion: nil)
-//        }
-//        
-//        secondaryWindow = PassThroughWindow(frame: UIScreen.main.bounds)
-//        secondaryWindow?.rootViewController = UIViewController()
-//        secondaryWindow?.rootViewController?.view.addSubview(navBar)
-//        navBar.setupConstraints()
-//        secondaryWindow?.isHidden = false
+        window?.rootViewController = navigationController
+
+        let navBar = NavBar(user: user)
+        NavBarManager.shared.navBar = navBar
+        
+        let searchModel = SearchModel()
+        var searchResultsView = SearchScreen(searchModel: searchModel)
+        searchResultsView.onDismiss = {
+            NavBarManager.shared.navBar?.collapseSearchBar()
+        }
+        let hostingController = UIHostingController(rootView: searchResultsView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = hostingController.presentationController as?
+            UISheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navBar.searchModel = searchModel
+        
+        navBar.onPresentSearchScreen = { [weak self] in
+            self?.navigationController?.present(hostingController, animated: true, completion: nil)
+        }
+        
+        secondaryWindow = PassThroughWindow(frame: UIScreen.main.bounds)
+        secondaryWindow?.rootViewController = UIViewController()
+        secondaryWindow?.rootViewController?.view.addSubview(navBar)
+        navBar.setupConstraints()
+        secondaryWindow?.isHidden = false
     }
 
     // Check for an auth session, if it exists get user data and log them in.
@@ -131,8 +131,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupAuthScreen() {
         navigationController = UINavigationController(rootViewController: AuthScreen())
         NavigationManager.shared.navigationController = navigationController
-        keyWindow?.rootViewController = navigationController
-        keyWindow?.makeKeyAndVisible()
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
     }
 
     func fetchAuthSession() -> Session? {
