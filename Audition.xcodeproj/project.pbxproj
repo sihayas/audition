@@ -184,7 +184,6 @@
 				C1765B942A6BE44000F65D7E /* Models */,
 				CD5761EA2BFFC8490032F347 /* Networking */,
 				C1765B802A6BDC6200F65D7E /* Screens */,
-				C104C8412A6ECB5B00A8B322 /* Transition */,
 				C1765B7F2A6BDC5000F65D7E /* Utils */,
 			);
 			path = Source;
@@ -209,19 +208,8 @@
 		C1765B7F2A6BDC5000F65D7E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				CD6F0B1D2C16F96000FA67D8 /* Custom Navigator */,
 				CD6F0B1C2C16F2CC00FA67D8 /* Custom */,
-				C1765B992A6BE63000F65D7E /* CellReuse.swift */,
-				C1765BBF2A6C833100F65D7E /* CGAffineTransform+Extensions.swift */,
-				C104C83D2A6EC15500A8B322 /* CGRect+Extensions.swift */,
-				C1765B832A6BDCC900F65D7E /* ClosureLayout */,
-				CD5761502BFC79E80032F347 /* KeychainHelper.swift */,
-				C1765B812A6BDC7100F65D7E /* Then.swift */,
-				C1765BBD2A6C800100F65D7E /* UIApplication+KeyWindow.swift */,
-				C1765BC32A6D74BE00F65D7E /* UICollectionView+Extensions.swift */,
-				CD54003D2BF6C7A700666F61 /* UIImage.swift */,
-				CD5762722C00DEE20032F347 /* UINavigationManager.swift */,
-				C1765BCB2A6E930600F65D7E /* UIScrollView+Extensions.swift */,
-				C1765BBB2A6C7D7800F65D7E /* UIView+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -307,11 +295,31 @@
 		CD6F0B1C2C16F2CC00FA67D8 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				CD5762722C00DEE20032F347 /* UINavigationManager.swift */,
+				CD5761502BFC79E80032F347 /* KeychainHelper.swift */,
+				CD54003D2BF6C7A700666F61 /* UIImage.swift */,
 				CD5762762C02A85C0032F347 /* UIImageView.swift */,
 				CD5761522BFCD11F0032F347 /* VisionColor.swift */,
 				CD67D4F22BE5B2C00039A5D2 /* UIColor.swift */,
 			);
 			path = Custom;
+			sourceTree = "<group>";
+		};
+		CD6F0B1D2C16F96000FA67D8 /* Custom Navigator */ = {
+			isa = PBXGroup;
+			children = (
+				C104C8412A6ECB5B00A8B322 /* Transition */,
+				C1765B992A6BE63000F65D7E /* CellReuse.swift */,
+				C1765BBF2A6C833100F65D7E /* CGAffineTransform+Extensions.swift */,
+				C104C83D2A6EC15500A8B322 /* CGRect+Extensions.swift */,
+				C1765B832A6BDCC900F65D7E /* ClosureLayout */,
+				C1765B812A6BDC7100F65D7E /* Then.swift */,
+				C1765BBD2A6C800100F65D7E /* UIApplication+KeyWindow.swift */,
+				C1765BC32A6D74BE00F65D7E /* UICollectionView+Extensions.swift */,
+				C1765BCB2A6E930600F65D7E /* UIScrollView+Extensions.swift */,
+				C1765BBB2A6C7D7800F65D7E /* UIView+Extensions.swift */,
+			);
+			path = "Custom Navigator";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
