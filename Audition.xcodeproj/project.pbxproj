@@ -197,7 +197,7 @@
 		C1765B7F2A6BDC5000F65D7E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				CD6F0B1D2C16F96000FA67D8 /* Custom Navigator */,
+				CD6F0B1D2C16F96000FA67D8 /* Transition */,
 				CD6F0B1C2C16F2CC00FA67D8 /* Custom */,
 			);
 			path = Utils;
@@ -280,13 +280,13 @@
 			path = Custom;
 			sourceTree = "<group>";
 		};
-		CD6F0B1D2C16F96000FA67D8 /* Custom Navigator */ = {
+		CD6F0B1D2C16F96000FA67D8 /* Transition */ = {
 			isa = PBXGroup;
 			children = (
 				CD6F0B222C17A1FB00FA67D8 /* Transition */,
 				CD6F0B342C17A1FC00FA67D8 /* Utils */,
 			);
-			path = "Custom Navigator";
+			path = Transition;
 			sourceTree = "<group>";
 		};
 		CD6F0B222C17A1FB00FA67D8 /* Transition */ = {

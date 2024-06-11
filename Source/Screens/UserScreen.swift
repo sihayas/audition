@@ -1,10 +1,3 @@
-//
-//  UserScreen.swift
-//  Audition
-//
-//  Created by decoherence on 5/27/24.
-//
-
 import UIKit
 import SwiftUI
 
@@ -34,7 +27,10 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             switch result {
             case .success(let userResponse):
                 self?.fetchedUserData = userResponse.data
-                print("found user \(userResponse.data)")
+                print("Received user data \(userResponse.data)")
+                if let fetchedUserData = self?.fetchedUserData {
+                    self?.setupProfile(userData: fetchedUserData)
+                }
             case .failure(let error):
                 print("Error fetching user data: \(error.localizedDescription)")
             }
@@ -51,7 +47,9 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.interactivePopGestureRecognizer?.delegate = self
         setupView()
         setupScrollView()
-        setupAvatar()
+        if userData != nil && fetchedUserData == nil {
+            setupProfile(userData: userData!)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,6 +60,10 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
+}
+
+// MARK: Setup UI
+extension UserScreen {
     
     private func setupView() {
         view.backgroundColor = .black
@@ -87,20 +89,30 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private func setupAvatar() {
-        if let imageURL = URL(string: userData?.image ?? "") {
+    private func setupProfile(userData: APIUser) {
+        if let imageURL = URL(string: userData.image) {
             avatarImage.setImage(from: imageURL)
-            // Check if the image is set and then extract the dominant color
             checkImageSet {
-                self.extractAndDisplayDominantColor()
+                guard let image = self.avatarImage.image else {
+                    print("failed")
+                    return }
+                
+                dominantColor(from: image) { [weak self] color in
+                    guard let self = self, let color = color else { return }
+                    
+                    DispatchQueue.main.async {
+                        let hexString = color.toHexString()
+                        self.setupBlurEffect(with: hexString)
+                        self.setupEssentials(userData: userData)
+                        self.setupMetaData(userData: userData)
+                    }
+                }
             }
         } else {
             print("Invalid image URL")
         }
     }
-
-    
-    
+        
     private func setupBlurEffect(with color: String) {
         let circleView = CircleView(hexColor: color, width: 760, height: 760, startRadius: 0, endRadius: 760)
         let circleHost = UIHostingController(rootView: circleView)
@@ -126,19 +138,20 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
         
         
-        let avatarContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
-        avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
-        avatarContainerView.addSubview(avatarImage)
-
+        let avatarContainerView = UIView()
         avatarContainerView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
             $0.layer.shadowColor = UIColor.black.cgColor
             $0.layer.shadowOpacity = 0.3
             $0.layer.shadowOffset = CGSize(width: 0, height: 16)
             $0.layer.shadowRadius = 24
+            $0.addSubview(avatarImage)
             contentView.addSubview($0)
         }.layout {
+            let topSpace = view.safeAreaInsets.top
+            let constant = view.frame.height / 2 - (70 / 2) - topSpace
+            $0.top == contentView.topAnchor + constant
             $0.centerX == contentView.centerXAnchor
-            $0.centerY == contentView.centerYAnchor
             $0.width == 70
             $0.height == 70
         }
@@ -156,11 +169,11 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private func setupEssentials() {
+    private func setupEssentials(userData: APIUser) {
         let essentialSpacing: CGFloat = -40
         let essentialSize: CGFloat = 144
         
-        let essentials = [userData?.essentialOne, userData?.essentialTwo, userData?.essentialThree]
+        let essentials = [userData.essentialOne, userData.essentialTwo, userData.essentialThree]
         
         for (index, essential) in essentials.enumerated() {
             let essentialContainerView = UIView()
@@ -212,7 +225,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         }
     }
    
-    private func setupMetaData() {
+    private func setupMetaData(userData: APIUser) {
         let metadataStackView = UIStackView()
         metadataStackView.then {
             $0.axis = .vertical
@@ -224,9 +237,9 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             $0.centerY == avatarImage.centerYAnchor
         }
 
-        let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: "0")
-        let soundsStackView = createMetadataStackView(heading: "sounds", statistic: "0")
-        let followersStackView = createMetadataStackView(heading: "followers", statistic: "0")
+        let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: userData.artifactsCount)
+        let soundsStackView = createMetadataStackView(heading: "sounds", statistic: 0)
+        let followersStackView = createMetadataStackView(heading: "followers", statistic: userData.followersCount)
 
         metadataStackView.addArrangedSubview(artifactsStackView)
         metadataStackView.addArrangedSubview(soundsStackView)
@@ -244,54 +257,41 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
             $0.bottom == contentView.bottomAnchor
         }
     }
-    
 }
 
 // MARK: Helpers
 extension UserScreen {
-    private func extractAndDisplayDominantColor() {
-            guard let image = avatarImage.image else {
-                print("failed")
-                return }
-            
-            dominantColor(from: image) { [weak self] color in
-                guard let self = self, let color = color else { return }
-                
-                DispatchQueue.main.async {
-                    let hexString = color.toHexString()
-                    self.setupBlurEffect(with: hexString)
-                    self.setupEssentials()
-                    self.setupMetaData()
-                }
-            }
-        }
-    
-    private func createMetadataStackView(heading: String, statistic: String) -> UIStackView {
+    private func createMetadataStackView(heading: String, statistic: Double) -> UIStackView {
         let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 4
-
+        stackView.do {
+            $0.axis = .vertical
+            $0.spacing = 4
+        }
+        
         let headingLabel = UILabel()
-        headingLabel.text = heading
-        headingLabel.font = UIFont.systemFont(ofSize: 13)
-        headingLabel.textColor = .white
-        stackView.addArrangedSubview(headingLabel)
-
+        headingLabel.do {
+            $0.text = heading
+            $0.font = UIFont.systemFont(ofSize: 13)
+            $0.textColor = .white.withAlphaComponent(0.75)
+            stackView.addArrangedSubview($0)
+        }
+        
         let statisticLabel = UILabel()
-        statisticLabel.text = statistic
-        statisticLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        statisticLabel.textColor = .white
-        stackView.addArrangedSubview(statisticLabel)
-
+        statisticLabel.do {
+            $0.text = String(statistic)
+            $0.font = UIFont.boldSystemFont(ofSize: 15)
+            $0.textColor = .white.withAlphaComponent(0.75)
+            stackView.addArrangedSubview($0)
+        }
+        
         return stackView
     }
     
     private func checkImageSet(completion: @escaping () -> Void) {
         DispatchQueue.global().async {
-            // Wait until the image is set
             var imageSet = false
             while !imageSet {
-                // Pause briefly to avoid busy-waiting
+
                 usleep(100_000) // 0.1 second
                 
                 // Check if the image is set on the main thread
