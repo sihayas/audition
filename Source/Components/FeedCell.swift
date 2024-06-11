@@ -270,6 +270,7 @@ extension FeedCell {
         ])
     }
     
+    
     // MARK: Artifact UI
     private func setupArtifact(nameText: String, rating: Double, username: String, text: String) {
             

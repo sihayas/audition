@@ -25,7 +25,7 @@ class EntryScreen: UIViewController {
     
     private var circleHost: UIHostingController<CircleView>?
     private var albumTextOutHost: UIHostingController<AnimateTextOutView>?
-    private var artistTextOutHost: UIHostingController<AnimateTextOutView>?
+    private var entryTextHost: UIHostingController<AnimateTextOutView>?
     private var artistTextInHost: UIHostingController<AnimateTextInView>?
     private var albumTextInHost: UIHostingController<AnimateTextInView>?
     private var bodyTextInHost: UIHostingController<AnimateTextInView>?
@@ -129,10 +129,14 @@ extension EntryScreen {
 
         // Set initial alpha to 0 for the fade-in effect
         blurEffectView.alpha = 0
+        circleView.alpha = 0
+        circleView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
 
         // Perform the fade-in animation with a delay
-        UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseInOut) {
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut) {
             blurEffectView.alpha = 1
+            circleView.alpha = 1
+            circleView.transform = CGAffineTransform.identity
         }
     }
     
@@ -153,37 +157,22 @@ extension EntryScreen {
             equalTo: cardView.widthAnchor,
             multiplier: 1.4
         ).isActive = true
-        
-        // art
-        setupArt(appleData: appleData)
 
-        let artistTextView = AnimateTextOutView(fontSize: 19, text: appleData.artistName, weight: .medium)
-        artistTextOutHost = UIHostingController(rootView: artistTextView)
-        guard let artistView = artistTextOutHost?.view else { return }
-        contentView.addSubview(artistView)
-        artistView.backgroundColor = .clear
-        artistView.translatesAutoresizingMaskIntoConstraints = false
+        let entryText = AnimateTextOutView(fontSize: 31, text: entry.text, weight: .regular)
+        entryTextHost = UIHostingController(rootView: entryText)
+        guard let entryTextView = entryTextHost?.view else { return }
+        cardView.addSubview(entryTextView)
+        entryTextView.backgroundColor = .clear
+        entryTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            artistView.topAnchor.constraint(equalTo: artView.bottomAnchor, constant: 42),
-            artistView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 42),
-            artistView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -42)
+            entryTextView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 32),
+            entryTextView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 54),
+            entryTextView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -54)
         ])
-        
-        let albumTextView = AnimateTextOutView(fontSize: 19, text: appleData.name, weight: .bold)
-        albumTextOutHost = UIHostingController(rootView: albumTextView)
-        guard let albumView = albumTextOutHost?.view else { return }
-        contentView.addSubview(albumView)
-        albumView.backgroundColor = .clear
-        albumView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            albumView.topAnchor.constraint(equalTo: artistView.bottomAnchor, constant: 0),
-            albumView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 42),
-            albumView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -42)
-        ])
-        
+        setupArt(appleData: appleData)
     }
 
-    
+
     private func setupArt(appleData: APIAppleSoundData) {
         // art shadow container
         let containerView = UIView()
@@ -195,26 +184,24 @@ extension EntryScreen {
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            containerView.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
             containerView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 32),
-            containerView.widthAnchor.constraint(equalToConstant: 364),
-            containerView.heightAnchor.constraint(equalToConstant: 364)
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            containerView.widthAnchor.constraint(equalToConstant: 240),
+            containerView.heightAnchor.constraint(equalToConstant: 240)
         ])
 
         // art
         containerView.addSubview(artView)
         artView.contentMode = .scaleAspectFit
         
-        let width = 600
-        let height = 600
-        guard let artworkUrl = URL(string: appleData.artworkUrl.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return }
+        guard let artworkUrl = URL(string: appleData.artworkUrl.replacingOccurrences(of: "{w}", with: "1000").replacingOccurrences(of: "{h}", with: "1000")) else { return }
         artView.setImage(from: artworkUrl)
-        
+
         artView.layer.cornerRadius = 32
         artView.layer.cornerCurve = .continuous
         artView.layer.masksToBounds = true
         artView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             artView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             artView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
@@ -222,24 +209,23 @@ extension EntryScreen {
             artView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
-        // animate avatar and art
-        contentView.layoutIfNeeded()
-        
-        let translation = CGAffineTransform(translationX: containerView.bounds.width * ((1 - 0.6593) / 2) - -8, y: -containerView.bounds.height * (1 - 0.6593) / 2)
-        let scale = CGAffineTransform(scaleX: 0.6593, y: 0.6593)
+        // animate art scaling and translation
+        let scaleTransform = CGAffineTransform(scaleX: 0, y: 0)
+        let translationTransform = CGAffineTransform(translationX: (view.bounds.width - containerView.bounds.width) / 2, y: 0)
+        let combinedTransform = scaleTransform.concatenating(translationTransform)
 
-        containerView.transform = CGAffineTransform.identity
-        UIView.animate(withDuration: 0.75,
-                       delay: 0,
-                       usingSpringWithDamping: 0.8,
+        artView.transform = combinedTransform
+        UIView.animate(withDuration: 1,
+                       delay: 0.1,
+                       usingSpringWithDamping: 1,
                        initialSpringVelocity: 0.2,
                        options: [.curveEaseInOut],
                        animations: {
-                            containerView.transform = scale.concatenating(translation)
+            self.artView.transform = .identity
                        }, completion: nil)
     }
 
-    
+
     private func setupContent(appleData: APIAppleSoundData) {
         let albumTextView = AnimateTextInView(fontSize: 15, text: appleData.name, weight: .semibold)
         albumTextInHost = UIHostingController(rootView: albumTextView)
@@ -253,7 +239,7 @@ extension EntryScreen {
             albumTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
             albumTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24)
         ])
-        
+
         let artistTextView = AnimateTextInView(fontSize: 13, text: appleData.artistName, weight: .medium)
         artistTextInHost = UIHostingController(rootView: artistTextView)
         guard let artistTextView = artistTextInHost?.view else { return }
@@ -266,7 +252,7 @@ extension EntryScreen {
             artistTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
             artistTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24)
         ])
-        
+
         let starRatingView = RatingView(rating: entry.rating ?? 0)
         ratingHost = UIHostingController(rootView: starRatingView)
         guard let starRatingView = ratingHost?.view else { return }
@@ -276,11 +262,11 @@ extension EntryScreen {
 
         NSLayoutConstraint.activate([
             starRatingView.bottomAnchor.constraint(equalTo: artistTextView.topAnchor, constant: -8),
-            starRatingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -288),
+            starRatingView.trailingAnchor.constraint(equalTo: artView.leadingAnchor, constant: -24),
             starRatingView.widthAnchor.constraint(equalToConstant: 20),
             starRatingView.heightAnchor.constraint(equalToConstant: 20)
         ])
-        
+
         // body text + avatar container
         // Outer view for shadow
         let shadowContainer = UIView()
@@ -301,7 +287,7 @@ extension EntryScreen {
         // Inner view for corner radius
         let containerView = UIView()
         shadowContainer.addSubview(containerView)
-        containerView.backgroundColor = UIColor.systemGray6
+        containerView.backgroundColor = UIColor.black
         containerView.layer.cornerRadius = 20
         containerView.layer.cornerCurve = .continuous
         containerView.clipsToBounds = true
@@ -316,34 +302,33 @@ extension EntryScreen {
 
 
         let avatar = avatarView
-        shadowContainer.addSubview(avatar)
-        let imageURL = entry.author.image
-        if let url = URL(string: imageURL) {
+        if let url = URL(string: entry.author.image) {
             avatar.setImage(from: url)
         } else {
             avatar.image = UIImage(named: "placeholder")
         }
         avatar.layer.cornerRadius = 20
-        avatar.layer.borderColor = UIColor.systemGray6.cgColor
+        avatar.layer.borderColor = UIColor.black.cgColor
         avatar.layer.borderWidth = 4
         avatar.layer.masksToBounds = true
         avatar.translatesAutoresizingMaskIntoConstraints = false
-        
+
+        shadowContainer.addSubview(avatar)
         NSLayoutConstraint.activate([
             avatar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             avatar.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -24),
             avatar.widthAnchor.constraint(equalToConstant: 40),
             avatar.heightAnchor.constraint(equalToConstant: 40)
         ])
-        
+
         let username = UILabel()
-        contentView.addSubview(username)
         username.text = entry.author.username
         username.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         username.alpha = 0.75
         username.backgroundColor = .clear
         username.translatesAutoresizingMaskIntoConstraints = false
 
+        shadowContainer.addSubview(username)
         NSLayoutConstraint.activate([
             username.bottomAnchor.constraint(equalTo: shadowContainer.topAnchor, constant: -8),
             username.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 8),
@@ -364,28 +349,23 @@ extension EntryScreen {
             bodyTextView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             bodyTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
-        
+
         avatar.alpha = 0
         avatar.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        shadowContainer.alpha = 0
+        shadowContainer.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        starRatingView.alpha = 0
+        starRatingView.transform = CGAffineTransform(scaleX: 0, y: 0)
         UIView.animate(withDuration: 1,
-                       delay: 0,
-                       usingSpringWithDamping: 0.6,
+                       delay: 0.25,
+                       usingSpringWithDamping: 1,
                        initialSpringVelocity: 1.0,
                        options: [.curveEaseOut],
                        animations: {
                             avatar.alpha = 1
                             avatar.transform = CGAffineTransform.identity
-                       },
-                       completion: nil)
-        
-        starRatingView.alpha = 0
-        starRatingView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-        UIView.animate(withDuration: 1,
-                       delay: 0.25,
-                       usingSpringWithDamping: 0.6,
-                       initialSpringVelocity: 1.0,
-                       options: [.curveEaseOut],
-                       animations: {
+            shadowContainer.alpha = 1
+            shadowContainer.transform = CGAffineTransform.identity
             starRatingView.alpha = 1
             starRatingView.transform = CGAffineTransform.identity
                        },

@@ -115,11 +115,16 @@ extension FeedScreen {
         }
         
         blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
+
         blurEffectView?.isUserInteractionEnabled = false
         blurEffectView?.translatesAutoresizingMaskIntoConstraints = false
 
         if let blurEffectView = blurEffectView {
+//            if let vfxSubView = blurEffectView.subviews.first(where: { String(describing: type(of: $0)) == "_UIVisualEffectBackdropView" }) {
+//                vfxSubView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+//            }
             collectionView.addSubview(blurEffectView)
+            
             NSLayoutConstraint.activate([
                 blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
