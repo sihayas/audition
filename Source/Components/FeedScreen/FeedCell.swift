@@ -399,47 +399,79 @@ extension FeedCell {
     
     private func setupAvatar() {
         let avatarSize: CGFloat = 40
+        let tap = UITapGestureRecognizer(target: self, action: #selector(avatarTapped))
+
+        avatarImageView.do {
+            $0.layer.cornerRadius = avatarSize / 2
+            $0.clipsToBounds = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         avatarContainerView = UIView()
-        avatarContainerView.layer.cornerRadius = (avatarSize / 2)
-        avatarContainerView.layer.shadowColor = UIColor.black.cgColor
-        avatarContainerView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        avatarContainerView.layer.shadowOpacity = 0.1
-        avatarContainerView.layer.shadowRadius = 8
-        avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
+        avatarContainerView.do {
+            $0.layer.cornerRadius = avatarSize / 2
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+            $0.layer.shadowOpacity = 0.1
+            $0.layer.shadowRadius = 8
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            addSubview($0)
+            $0.addSubview(avatarImageView)
+            $0.addGestureRecognizer(tap)
+        }
 
-        avatarImageView.layer.cornerRadius = avatarSize / 2
-        avatarImageView.clipsToBounds = true
-        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        avatarContainerView.addSubview(avatarImageView)
-        addSubview(avatarContainerView)
-        
         NSLayoutConstraint.activate([
             avatarImageView.centerXAnchor.constraint(equalTo: avatarContainerView.centerXAnchor),
             avatarImageView.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor),
             avatarImageView.widthAnchor.constraint(equalToConstant: avatarSize),
             avatarImageView.heightAnchor.constraint(equalToConstant: avatarSize),
-            
+
             avatarContainerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -130),
             avatarContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             avatarContainerView.widthAnchor.constraint(equalToConstant: 40),
             avatarContainerView.heightAnchor.constraint(equalToConstant: 40)
         ])
-        
-//        when avatar is tapped print something
-        let tap = UITapGestureRecognizer(target: self, action: #selector(avatarTapped))
-        avatarContainerView.addGestureRecognizer(tap)
     }
     
     @objc func avatarTapped() {
-        print("Avatar tapped")
+        NavigationManager.shared.navigateToUserScreen(withUserData: entry?.author)
     }
 }
 
 // MARK: Gestures
 
 extension FeedCell {
+    private func showDial(at point: CGPoint) {
+        let dial = DialView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+        dial.center = point
+        contentView.addSubview(dial)
+        dialView = dial
+        dial.animateDialIn()
+    }
+    
+    private func hideDial() {
+        dialView?.hideDial()
+        dialView = nil
+    }
+    
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        let location = gesture.location(in: contentView)
+        switch gesture.state {
+        case .began:
+            showDial(at: location)
+        case .ended, .cancelled, .failed:
+            hideDial()
+        default:
+            break
+        }
+    }
+    
+    private func setupGesture() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        longPressGesture.minimumPressDuration = 0.25
+        addGestureRecognizer(longPressGesture)
+    }
+    
     // Allow gestures outside of the cell bounds
     override func hitTest(_ point: CGPoint, with e: UIEvent?) -> UIView? {
         if let result = super.hitTest(point, with:e) {
@@ -452,105 +484,5 @@ extension FeedCell {
             }
         }
         return nil
-    }
-    
-    private func setupGesture() {
-        // dial
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        longPressGesture.minimumPressDuration = 0.25
-        artImageView.addGestureRecognizer(longPressGesture)
-        artImageView.isUserInteractionEnabled = true
-    }
-
-    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: contentView)
-        switch gesture.state {
-        case .began:
-            showDial(at: location)
-        case .changed:
-            dialView?.updateSelectedAction(at: gesture.location(in: dialView))
-        case .ended:
-            if let selectedAction = dialView?.selectedAction {
-                performAction(selectedAction)
-            }
-            hideDial()
-        default:
-            break
-        }
-    }
-
-    private func animateDialIn(_ dial: DialView) {
-        dial.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-        dial.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 0.75,
-                       initialSpringVelocity: 1,
-                       options: .curveEaseInOut,
-                       animations: {
-                           dial.transform = .identity
-                           dial.alpha = 1
-                       },
-                       completion: nil)
-    }
-
-    private func showDial(at point: CGPoint) {
-        let dial = DialView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
-        dial.center = point
-        contentView.addSubview(dial)
-        dialView = dial
-        animateDialIn(dial)
-    }
-
-    private func animateDialOut(_ dial: DialView, completion: @escaping () -> Void) {
-        UIView.animate(withDuration: 0.4,
-                       delay: 0,
-                       usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 0,
-                       options: .curveEaseInOut,
-                       animations: {
-                           dial.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-                           dial.alpha = 0
-                       },
-                       completion: { _ in
-                           completion()
-                       })
-    }
-
-    private func hideDial() {
-        if let dial = dialView {
-            animateDialOut(dial) {
-                dial.removeFromSuperview()
-                self.dialView = nil
-            }
-        }
-    }
-
-    
-    private func performAction(_ action: Int) {
-        switch action {
-        case 0:
-            print("Create action selected")
-        case 1:
-            print("Go action selected")
-        case 2:
-            print("Heart action selected")
-            commitHeartAction()
-        default:
-            break
-        }
-    }
-    
-    private func commitHeartAction() {
-        guard let entry = entry else { return }
-        
-        PostAPI.createAction(authorId: entry.author.id, actionType: "heart", sourceId: entry.id, sourceType: "entry", soundId: entry.sound.id) { result in
-            switch result {
-            case .success:
-                print("Heart action committed successfully")
-            case .failure(let error):
-                print("Error committing heart action: \(error)")
-            }
-        }
     }
 }
