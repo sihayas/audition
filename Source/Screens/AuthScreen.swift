@@ -1,17 +1,3 @@
-//
-//  AuthScreen.swift
-//  InstagramTransition
-//
-//  Created by decoherence on 5/18/24.
-//
-
-//
-//  SoundScreen.swift
-//  InstagramTransition
-//
-//  Created by decoherence on 5/9/24.
-//
-
 import UIKit
 import SwiftUI
 import AuthenticationServices
@@ -78,91 +64,93 @@ class AuthScreen: UIViewController, UIGestureRecognizerDelegate {
     private func setupBlurEffect() {
         let circleView = CircleView(hexColor: "FFFFFF", width: 760, height: 760, startRadius: 0, endRadius: 760)
         let circleHost = UIHostingController(rootView: circleView)
-        circleHost.view.backgroundColor = .clear
-        circleHost.view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(circleHost.view)
-        NSLayoutConstraint.activate([
-            circleHost.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circleHost.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        circleHost.view.then {
+            $0.backgroundColor = .clear
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == view.centerXAnchor
+            $0.bottom == view.bottomAnchor
+        }
 
         let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(blurEffectView)
-        NSLayoutConstraint.activate([
-            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurEffectView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            blurEffectView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        blurEffectView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.top == view.topAnchor
+            $0.leading == view.leadingAnchor
+            $0.trailing == view.trailingAnchor
+            $0.bottom == view.bottomAnchor
+        }
     }
-    
-    private func setupCard() {
-        cardView.layer.cornerRadius = 32
-        cardView.layer.shadowColor = UIColor.black.cgColor
-        cardView.layer.shadowOpacity = 0.1
-        cardView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        cardView.layer.shadowRadius = 8
-        cardView.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-        cardView.layer.borderWidth = 1.0
-        cardView.backgroundColor = .systemGray6
-        cardView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(cardView)
-        cardView.transform = CGAffineTransform(rotationAngle: 4 * .pi / 180)
 
-        NSLayoutConstraint.activate([
-            cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            cardView.widthAnchor.constraint(equalToConstant: 256),
-            cardView.heightAnchor.constraint(equalToConstant: 360)
-        ])
+    private func setupCard() {
+        cardView.then {
+            $0.layer.cornerRadius = 32
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOpacity = 0.1
+            $0.layer.shadowOffset = CGSize(width: 0, height: 4)
+            $0.layer.shadowRadius = 8
+            $0.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+            $0.layer.borderWidth = 1.0
+            $0.backgroundColor = .systemGray6
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.transform = CGAffineTransform(rotationAngle: 4 * .pi / 180)
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == view.centerXAnchor
+            $0.centerY == view.centerYAnchor
+            $0.width == 256
+            $0.height == 360
+        }
 
         let bodyTextLabel = UILabel()
-        bodyTextLabel.translatesAutoresizingMaskIntoConstraints = false
-        bodyTextLabel.backgroundColor = .clear
-        bodyTextLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        bodyTextLabel.text = "Seemed interesting from the feature list and jean's admittedly cool art direction, but sadly this is kinda more tiktok zoomer not-rly-indie diet-alternative pop ... maybe a hair more interesting production-wise?? still, every time i hear this record's execution of lowest common denominator whoa-oh passages i cringe so hard, plus jean's delivery across the board comes across wicked corny. not the worst album of the year, but about as middle-of-the-road as u can get. i'm gettin too old for this shit lmao. why bill yrself as a genre-blending artist if yr "
-        bodyTextLabel.numberOfLines = 16
-        bodyTextLabel.alpha = 0.9
-        bodyTextLabel.textAlignment = .left
-        cardView.addSubview(bodyTextLabel)
+        bodyTextLabel.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.backgroundColor = .clear
+            $0.font = .systemFont(ofSize: 15, weight: .medium)
+            $0.text = "Seemed interesting from the feature list and jean's admittedly cool art direction, but sadly this is kinda more tiktok zoomer not-rly-indie diet-alternative pop ... maybe a hair more interesting production-wise?? still, every time i hear this record's execution of lowest common denominator whoa-oh passages i cringe so hard, plus jean's delivery across the board comes across wicked corny. not the worst album of the year, but about as middle-of-the-road as u can get. i'm gettin too old for this shit lmao. why bill yrself as a genre-blending artist if yr "
+            $0.numberOfLines = 16
+            $0.alpha = 0.9
+            $0.textAlignment = .left
+            cardView.addSubview($0)
+        }.layout {
+            $0.top == cardView.topAnchor + 20
+            $0.leading == cardView.leadingAnchor + 24
+            $0.trailing == cardView.trailingAnchor - 24
+        }
 
-        NSLayoutConstraint.activate([
-            bodyTextLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
-            bodyTextLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 24),
-            bodyTextLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -24)
-        ])
-        
         let ratingView = RatingView(rating: 1)
         let ratingHost = UIHostingController(rootView: ratingView)
         addChild(ratingHost)
         ratingHost.didMove(toParent: self)
-        cardView.addSubview(ratingHost.view)
+        ratingHost.view.then {
+            $0.backgroundColor = .clear
+            $0.alpha = 0.9
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            cardView.addSubview($0)
+        }.layout {
+            $0.leading == cardView.leadingAnchor + 24
+            $0.bottom == cardView.bottomAnchor - 24
+            $0.width == 20
+            $0.height == 20
+        }
 
-        ratingHost.view.backgroundColor = .clear
-        ratingHost.view.alpha = 0.9
-        ratingHost.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            ratingHost.view.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 24),
-            ratingHost.view.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -24),
-            ratingHost.view.widthAnchor.constraint(equalToConstant: 20),
-            ratingHost.view.heightAnchor.constraint(equalToConstant: 20)
-        ])
-        
         let avatar = UIImageView()
-        avatar.layer.cornerRadius = 20
-        avatar.layer.borderColor = UIColor.systemGray6.cgColor
-        avatar.layer.borderWidth = 2
-        avatar.clipsToBounds = true
-        avatar.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(avatar)
-
-        NSLayoutConstraint.activate([
-            avatar.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 8),
-            avatar.topAnchor.constraint(equalTo: cardView.topAnchor, constant: -8),
-            avatar.widthAnchor.constraint(equalToConstant: 40),
-            avatar.heightAnchor.constraint(equalToConstant: 40)
-        ])
+        avatar.then {
+            $0.layer.cornerRadius = 20
+            $0.layer.borderColor = UIColor.systemGray6.cgColor
+            $0.layer.borderWidth = 2
+            $0.clipsToBounds = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            cardView.addSubview($0)
+        }.layout {
+            $0.trailing == cardView.trailingAnchor + 8
+            $0.top == cardView.topAnchor - 8
+            $0.width == 40
+            $0.height == 40
+        }
 
         if let url = URL(string: "https://i.pinimg.com/474x/00/47/6a/00476aa6b476b9169a6e5e05e224c9ab.jpg") {
             URLSession.shared.dataTask(with: url) { data, response, error in
@@ -175,57 +163,45 @@ class AuthScreen: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func setupAppleSignInButton() {
-
         let buttonContainer = UIView()
-        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(buttonContainer)
-        
-
-        let buttonSize: CGFloat = 64
-        NSLayoutConstraint.activate([
-            buttonContainer.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            buttonContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            buttonContainer.heightAnchor.constraint(equalToConstant: buttonSize)
-            // Remove the width constraint
-        ])
-        
-
-        buttonContainer.layer.cornerRadius = buttonSize / 2
-        buttonContainer.layer.backgroundColor = UIColor.init(hex: "#1C1C1E")?.cgColor
-        buttonContainer.clipsToBounds = true
-        
+        buttonContainer.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.layer.cornerRadius = 32
+            $0.layer.backgroundColor = UIColor.init(hex: "#1C1C1E")?.cgColor
+            $0.clipsToBounds = true
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == contentView.centerXAnchor
+            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor
+            $0.height == 64
+        }
 
         let signInWithAppleButton = ASAuthorizationAppleIDButton()
-        signInWithAppleButton.translatesAutoresizingMaskIntoConstraints = false
-        buttonContainer.addSubview(signInWithAppleButton)
-        
-        
-        NSLayoutConstraint.activate([
-            signInWithAppleButton.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-            signInWithAppleButton.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
-            signInWithAppleButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
-            signInWithAppleButton.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor)
-        ])
-        
+        signInWithAppleButton.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.addTarget(self, action: #selector(handleAppleSignIn), for: .touchUpInside)
+            buttonContainer.addSubview($0)
+        }.layout {
+            $0.top == buttonContainer.topAnchor
+            $0.bottom == buttonContainer.bottomAnchor
+            $0.leading == buttonContainer.leadingAnchor
+            $0.trailing == buttonContainer.trailingAnchor
+        }
 
         let appleLogoImageView = UIImageView(image: UIImage(systemName: "applelogo"))
-        appleLogoImageView.translatesAutoresizingMaskIntoConstraints = false
-        appleLogoImageView.contentMode = .scaleAspectFit
-        appleLogoImageView.tintColor = .white
-        buttonContainer.addSubview(appleLogoImageView)
-        
-
-        NSLayoutConstraint.activate([
-            appleLogoImageView.centerXAnchor.constraint(equalTo: buttonContainer.centerXAnchor),
-            appleLogoImageView.centerYAnchor.constraint(equalTo: buttonContainer.centerYAnchor),
-            appleLogoImageView.heightAnchor.constraint(equalToConstant: 32),
-            appleLogoImageView.widthAnchor.constraint(equalToConstant: 32)
-        ])
-        
-
-        signInWithAppleButton.addTarget(self, action: #selector(handleAppleSignIn), for: .touchUpInside)
+        appleLogoImageView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFit
+            $0.tintColor = .white
+            buttonContainer.addSubview($0)
+        }.layout {
+            $0.centerX == buttonContainer.centerXAnchor
+            $0.centerY == buttonContainer.centerYAnchor
+            $0.height == 32
+            $0.width == 32
+        }
     }
-    
+
     @objc private func handleAppleSignIn() {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]

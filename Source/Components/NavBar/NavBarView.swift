@@ -111,109 +111,121 @@ class NavBar: UIView, UIGestureRecognizerDelegate, UISearchBarDelegate {
     
     private func setupSearchBar() {
         containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.clipsToBounds = false
-        containerView.layer.shadowColor = UIColor.black.cgColor
-        containerView.layer.shadowOpacity = 0.4
-        containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        containerView.layer.shadowRadius = 8
-        containerView.backgroundColor = .black
-        containerView.layer.cornerRadius = cornerRadius
-        containerView.layer.cornerCurve = .continuous
+        containerView.do {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.clipsToBounds = false
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOpacity = 0.4
+            $0.layer.shadowOffset = CGSize(width: 0, height: 4)
+            $0.layer.shadowRadius = 8
+            $0.backgroundColor = .black
+            $0.layer.cornerRadius = cornerRadius
+            $0.layer.cornerCurve = .continuous
+            addSubview($0)
+        }
         
         searchBar = UISearchBar()
-        searchBar.placeholder = "Arwen"
-        searchBar.backgroundImage = UIImage()
-        searchBar.searchTextField.backgroundColor = .clear
-        searchBar.searchTextField.font = .systemFont(ofSize: 15)
-        searchBar.isUserInteractionEnabled = false
-        searchBar.backgroundColor = .clear
-        searchBar.delegate = self
-        searchBar.searchTextField.textColor = .white.withAlphaComponent(0.75)
-        if let iconImageView = searchBar.searchTextField.leftView as? UIImageView {
-            defaultSearchIcon = iconImageView.image
+        searchBar.do {
+            $0.placeholder = "Arwen"
+            $0.backgroundImage = UIImage()
+            $0.searchTextField.backgroundColor = .clear
+            $0.searchTextField.font = .systemFont(ofSize: 15)
+            $0.isUserInteractionEnabled = false
+            $0.backgroundColor = .clear
+            $0.delegate = self
+            $0.searchTextField.textColor = .white.withAlphaComponent(0.75)
+            if let iconImageView = $0.searchTextField.leftView as? UIImageView {
+                defaultSearchIcon = iconImageView.image
+            }
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.searchTextField.translatesAutoresizingMaskIntoConstraints = false
+            containerView.addSubview($0)
         }
-        containerView.addSubview(searchBar)
-        addSubview(containerView)
         
         addGestures()
-        
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.searchTextField.translatesAutoresizingMaskIntoConstraints = false
         
         containerHeightCnst = containerView.heightAnchor.constraint(equalToConstant: height)
         containerLeadingCnst = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 165)
         containerTrailingCnst = containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -165)
         searchBarBottomCnst = searchBar.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 16)
         
-        NSLayoutConstraint.activate([
-            containerLeadingCnst,
-            containerTrailingCnst,
-            containerHeightCnst,
-            searchBarBottomCnst,
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            searchBar.searchTextField.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor),
-            searchBar.searchTextField.leadingAnchor.constraint(equalTo: searchBar.leadingAnchor, constant: 8),
-            searchBar.searchTextField.trailingAnchor.constraint(equalTo: searchBar.trailingAnchor, constant: -8)
-        ])
+        containerView.layout {
+            containerLeadingCnst.isActive = true
+            containerTrailingCnst.isActive = true
+            containerHeightCnst.isActive = true
+            $0.bottom == bottomAnchor
+        }
+        
+        searchBar.layout {
+            searchBarBottomCnst.isActive = true
+            $0.leading == containerView.leadingAnchor
+            $0.trailing == containerView.trailingAnchor
+        }
+        
+        searchBar.searchTextField.layout {
+            $0.centerY == searchBar.centerYAnchor
+            $0.leading == searchBar.leadingAnchor + 8
+            $0.trailing == searchBar.trailingAnchor - 8
+        }
     }
     
     private func setupNotification() {
         notificationButton = UIButton()
-        notificationButton.translatesAutoresizingMaskIntoConstraints = false
-        notificationButton.layer.shadowColor = UIColor.black.cgColor
-        notificationButton.layer.shadowOpacity = 0.2
-        notificationButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        notificationButton.layer.shadowRadius = 4
-    
+        notificationButton.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOpacity = 0.2
+            $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+            $0.layer.shadowRadius = 4
+            addSubview($0)
+        }.layout {
+            $0.trailing == containerView.leadingAnchor - 8
+            $0.centerY == containerView.centerYAnchor
+            $0.width == 32
+            $0.height == 32
+        }
+
         let blackView = UIView()
-        blackView.translatesAutoresizingMaskIntoConstraints = false
-        blackView.layer.cornerRadius = 16
-        blackView.layer.cornerCurve = .continuous
-        blackView.clipsToBounds = true
-        blackView.backgroundColor = UIColor.black
-        blackView.layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
-        blackView.layer.borderWidth = 1
-    
+        blackView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.layer.cornerRadius = 16
+            $0.layer.cornerCurve = .continuous
+            $0.clipsToBounds = true
+            $0.backgroundColor = UIColor.black
+            $0.layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
+            $0.layer.borderWidth = 1
+            notificationButton.addSubview($0)
+        }.layout {
+            $0.top == notificationButton.topAnchor
+            $0.leading == notificationButton.leadingAnchor
+            $0.trailing == notificationButton.trailingAnchor
+            $0.bottom == notificationButton.bottomAnchor
+        }
+
         let dotView = UIView()
-        dotView.translatesAutoresizingMaskIntoConstraints = false
-        dotView.backgroundColor = .white
-        dotView.layer.cornerRadius = 4
-        dotView.alpha = 0.75
-    
-        notificationButton.addSubview(blackView)
-        notificationButton.addSubview(dotView)
-    
-        addSubview(notificationButton)
-    
-        NSLayoutConstraint.activate([
-            notificationButton.trailingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: -8),
-            notificationButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            notificationButton.widthAnchor.constraint(equalToConstant: 32),
-            notificationButton.heightAnchor.constraint(equalToConstant: 32),
-            blackView.topAnchor.constraint(equalTo: notificationButton.topAnchor),
-            blackView.leadingAnchor.constraint(equalTo: notificationButton.leadingAnchor),
-            blackView.trailingAnchor.constraint(equalTo: notificationButton.trailingAnchor),
-            blackView.bottomAnchor.constraint(equalTo: notificationButton.bottomAnchor),
-            dotView.centerXAnchor.constraint(equalTo: notificationButton.centerXAnchor),
-            dotView.centerYAnchor.constraint(equalTo: notificationButton.centerYAnchor)
-        ])
+        dotView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.backgroundColor = .white
+            $0.layer.cornerRadius = 4
+            $0.alpha = 0.75
+            notificationButton.addSubview($0)
+        }.layout {
+            $0.centerX == notificationButton.centerXAnchor
+            $0.centerY == notificationButton.centerYAnchor
+        }
     }
     
     private func setupAvatar(imageUrl: String) {
         let avatarView = AvatarView(imageUrl: imageUrl)
         let hostingController = UIHostingController(rootView: avatarView)
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        
-        addSubview(hostingController.view)
-        
-        NSLayoutConstraint.activate([
-            hostingController.view.leadingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 8),
-            hostingController.view.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
-        ])
+        hostingController.view.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.backgroundColor = .clear
+            addSubview($0)
+        }.layout {
+            $0.leading == containerView.trailingAnchor + 8
+            $0.centerY == containerView.centerYAnchor
+        }
     }
 
     deinit {
@@ -270,71 +282,74 @@ extension NavBar {
                     if let data = data, let image = UIImage(data: data), let self = self {
                         DispatchQueue.main.async {
                             let hostingController = UIHostingController(rootView: ArtworkImageView(image: image, albumName: albumName ?? "Unknown Album", artistName: artistName ?? "Unknown Artist"))
-                            hostingController.view.frame = CGRect(x: 0, y: 0, width: 332, height: 332)
-                            hostingController.view.backgroundColor = .clear
-                            hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-                            hostingController.view.tag = 999
+                            hostingController.view.then {
+                                $0.frame = CGRect(x: 0, y: 0, width: 332, height: 332)
+                                $0.backgroundColor = .clear
+                                $0.translatesAutoresizingMaskIntoConstraints = false
+                                $0.tag = 999
+                                self.containerView.addSubview($0)
+                            }.layout {
+                                $0.centerX == self.containerView.centerXAnchor
+                                $0.top == self.containerView.topAnchor + 56
+                                $0.width == 334
+                                $0.height == 334
+                            }
                             
                             self.storedSearchText = self.searchBar.text
                             self.searchBar.text = ""
                             
-                            // Add caret icon
                             let customIcon = UIImage(named: "caret")?.withRenderingMode(.alwaysTemplate)
                             let iconImageView = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: 18, height: 18)))
-                            iconImageView.contentMode = .scaleAspectFit
-                            iconImageView.image = customIcon
-                            iconImageView.tintColor = .secondaryLabel
+                            iconImageView.do {
+                                $0.contentMode = .scaleAspectFit
+                                $0.image = customIcon
+                                $0.tintColor = .secondaryLabel
+                            }
                             let containerView = UIView(frame: iconImageView.frame)
                             containerView.addSubview(iconImageView)
                             self.searchBar.searchTextField.leftView = containerView
                             self.searchBar.searchTextField.leftViewMode = .always
                             
-                            // Add long press gesture
                             let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:)))
                             longPressGesture.minimumPressDuration = 0.25
                             hostingController.view.addGestureRecognizer(longPressGesture)
                             hostingController.view.isUserInteractionEnabled = true
                             
-                            // Add send button
                             let sendButton = UIButton(type: .system)
-                            sendButton.setImage(UIImage(systemName: "arrow.up.circle.fill"), for: .normal)
-                            sendButton.tintColor = .secondaryLabel
-                            sendButton.translatesAutoresizingMaskIntoConstraints = false
-                            sendButton.tag = 999
-                            sendButton.addAction(UIAction { [weak self] _ in
-                                guard let self = self, var userId = self.user.id else { return }
-                                userId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
-                                userId = userId.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-                                let text = self.searchBar.text ?? ""
-                                let simpleSoundable = SimpleSoundable(searchResult: searchResult)
-                                
-                                PostAPI.submitPost(text: text, rating: 1, userId: userId, sound: simpleSoundable) { result in
-                                    DispatchQueue.main.async {
-                                        if case .success = result {
-                                            self.searchBar.text = ""
-                                            self.rating = 0
-                                            NavBarManager.shared.selectedSearchResult = nil
+                            sendButton.then {
+                                $0.setImage(UIImage(systemName: "arrow.up.circle.fill"), for: .normal)
+                                $0.tintColor = .secondaryLabel
+                                $0.translatesAutoresizingMaskIntoConstraints = false
+                                $0.tag = 999
+                                $0.addAction(UIAction { [weak self] _ in
+                                    guard let self = self, var userId = self.user.id else { return }
+                                    userId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    userId = userId.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                                    let text = self.searchBar.text ?? ""
+                                    let simpleSoundable = SimpleSoundable(searchResult: searchResult)
+                                    
+                                    PostAPI.submitPost(text: text, rating: 1, userId: userId, sound: simpleSoundable) { result in
+                                        DispatchQueue.main.async {
+                                            if case .success = result {
+                                                self.searchBar.text = ""
+                                                self.rating = 0
+                                                NavBarManager.shared.selectedSearchResult = nil
+                                            }
                                         }
                                     }
-                                }
-                            }, for: .touchUpInside)
+                                }, for: .touchUpInside)
+                                self.searchBar.addSubview($0)
+                            }.layout {
+                                $0.trailing == self.searchBar.trailingAnchor - 12
+                                $0.centerY == self.searchBar.centerYAnchor
+                                $0.width == 24
+                                $0.height == 24
+                            }
                             
-                            self.searchBar.addSubview(sendButton)
-                            self.containerView.addSubview(hostingController.view)
-                            
-                            NSLayoutConstraint.activate([
-                                hostingController.view.centerXAnchor.constraint(equalTo: self.containerView.centerXAnchor),
-                                hostingController.view.topAnchor.constraint(equalTo: self.containerView.topAnchor, constant: 56),
-                                hostingController.view.widthAnchor.constraint(equalToConstant: 334),
-                                hostingController.view.heightAnchor.constraint(equalToConstant: 334),
-                                sendButton.trailingAnchor.constraint(equalTo: self.searchBar.trailingAnchor, constant: -12),
-                                sendButton.centerYAnchor.constraint(equalTo: self.searchBar.centerYAnchor),
-                                sendButton.widthAnchor.constraint(equalToConstant: 24),
-                                sendButton.heightAnchor.constraint(equalToConstant: 24)
-                            ])
-                            
-                            hostingController.view.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
-                            hostingController.view.alpha = 0
+                            hostingController.view.do {
+                                $0.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
+                                $0.alpha = 0
+                            }
                             UIView.animate(withDuration: 3, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 2, options: [.curveEaseOut]) {
                                 hostingController.view.transform = .identity
                                 hostingController.view.alpha = 1
@@ -362,7 +377,6 @@ extension NavBar {
 
             searchBar.text = storedSearchText
 
-            // Remove the send icon if it exists
             if let sendButton = searchBar.viewWithTag(999) as? UIButton {
                 sendButton.removeFromSuperview()
             }

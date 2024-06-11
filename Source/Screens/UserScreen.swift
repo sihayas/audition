@@ -104,109 +104,125 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
     private func setupBlurEffect(with color: String) {
         let circleView = CircleView(hexColor: color, width: 760, height: 760, startRadius: 0, endRadius: 760)
         let circleHost = UIHostingController(rootView: circleView)
-        circleHost.view.backgroundColor = .clear
-        circleHost.view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(circleHost.view)
+        circleHost.view.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.backgroundColor = .clear
+            $0.layer.masksToBounds = true
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == contentView.centerXAnchor
+            $0.centerY == contentView.centerYAnchor
+        }
 
         let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(blurEffectView)
-
-        let avatarSize: CGFloat = 70
-        avatarImage.layer.cornerRadius = avatarSize / 2
-        avatarImage.clipsToBounds = true
-        avatarImage.translatesAutoresizingMaskIntoConstraints = false
-
-        let avatarContainerView = UIView(frame: CGRect(x: 0, y: 0, width: avatarSize, height: avatarSize))
+        blurEffectView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.top == view.topAnchor
+            $0.leading == view.leadingAnchor
+            $0.trailing == view.trailingAnchor
+            $0.bottom == view.bottomAnchor
+        }
+        
+        
+        let avatarContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
         avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
         avatarContainerView.addSubview(avatarImage)
 
-        // Adjust the shadow properties to make the item appear even higher
-        avatarContainerView.layer.shadowColor = UIColor.black.cgColor
-        avatarContainerView.layer.shadowOpacity = 0.3
-        avatarContainerView.layer.shadowOffset = CGSize(width: 0, height: 16)
-        avatarContainerView.layer.shadowRadius = 24
+        avatarContainerView.then {
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOpacity = 0.3
+            $0.layer.shadowOffset = CGSize(width: 0, height: 16)
+            $0.layer.shadowRadius = 24
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == contentView.centerXAnchor
+            $0.centerY == contentView.centerYAnchor
+            $0.width == 70
+            $0.height == 70
+        }
 
-        contentView.addSubview(avatarContainerView)
-
-        NSLayoutConstraint.activate([
-            circleHost.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circleHost.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurEffectView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            blurEffectView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            avatarContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            avatarContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            avatarContainerView.widthAnchor.constraint(equalToConstant: avatarSize),
-            avatarContainerView.heightAnchor.constraint(equalToConstant: avatarSize),
-
-            avatarImage.centerXAnchor.constraint(equalTo: avatarContainerView.centerXAnchor),
-            avatarImage.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor),
-            avatarImage.widthAnchor.constraint(equalTo: avatarContainerView.widthAnchor),
-            avatarImage.heightAnchor.constraint(equalTo: avatarContainerView.heightAnchor)
-        ])
+        avatarImage.then{
+            $0.layer.cornerRadius = 70 / 2
+            $0.clipsToBounds = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.centerX == avatarContainerView.centerXAnchor
+            $0.centerY == avatarContainerView.centerYAnchor
+            $0.width == avatarContainerView.widthAnchor
+            $0.height == avatarContainerView.heightAnchor
+        }
     }
     
     private func setupEssentials() {
         let essentialSpacing: CGFloat = -40
         let essentialSize: CGFloat = 144
-
+        
         let essentials = [userData?.essentialOne, userData?.essentialTwo, userData?.essentialThree]
-
+        
         for (index, essential) in essentials.enumerated() {
             let essentialContainerView = UIView()
-            essentialContainerView.translatesAutoresizingMaskIntoConstraints = false
-            essentialContainerView.layer.shadowColor = UIColor.black.cgColor
-            essentialContainerView.layer.shadowOpacity = 0.5
-            essentialContainerView.layer.shadowOffset = CGSize(width: 0, height: 4)
-            essentialContainerView.layer.shadowRadius = 6
-
+            essentialContainerView.then {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+                $0.layer.shadowColor = UIColor.black.cgColor
+                $0.layer.shadowOpacity = 0.5
+                $0.layer.shadowOffset = CGSize(width: 0, height: 4)
+                $0.layer.shadowRadius = 6
+                contentView.addSubview($0)
+            }.layout {
+                let centerXOffset: CGFloat = index % 2 == 0 ? 56 : -56
+                $0.centerX == contentView.centerXAnchor + centerXOffset
+                $0.width == essentialSize
+                $0.height == essentialSize
+                
+                if index == 0 {
+                    $0.top == contentView.safeAreaLayoutGuide.topAnchor + 8
+                } else {
+                    $0.top == contentView.subviews[contentView.subviews.count - 2].bottomAnchor + essentialSpacing
+                }
+            }
+            
+            let rotationAngle: CGFloat = index % 2 == 0 ? 4 : -4
+            essentialContainerView.transform = CGAffineTransform(rotationAngle: rotationAngle * .pi / 180)
+            
             let essentialImageView = UIImageView()
-            essentialImageView.translatesAutoresizingMaskIntoConstraints = false
-            essentialImageView.contentMode = .scaleAspectFill
-            essentialImageView.clipsToBounds = true
-            essentialImageView.layer.cornerCurve = .continuous
-            essentialImageView.layer.cornerRadius = 20
-            essentialImageView.backgroundColor = .black
-
+            essentialImageView.then {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+                $0.contentMode = .scaleAspectFill
+                $0.clipsToBounds = true
+                $0.layer.cornerCurve = .continuous
+                $0.layer.cornerRadius = 20
+                $0.backgroundColor = .black
+                essentialContainerView.addSubview($0)
+            }.layout {
+                $0.leading == essentialContainerView.leadingAnchor
+                $0.trailing == essentialContainerView.trailingAnchor
+                $0.top == essentialContainerView.topAnchor
+                $0.bottom == essentialContainerView.bottomAnchor
+            }
+            
             if let artworkUrlString = essential?.appleData?.artworkUrl {
                 let width = Int(essentialSize)
                 let height = Int(essentialSize)
-                guard let artworkUrl = URL(string: artworkUrlString.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return  }
+                guard let artworkUrl = URL(string: artworkUrlString.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)")) else { return }
                 essentialImageView.setImage(from: artworkUrl)
             }
-
-            essentialContainerView.addSubview(essentialImageView)
-            contentView.addSubview(essentialContainerView)
-
-            let centerXOffset: CGFloat = index % 2 == 0 ? 56 : -56
-            let rotationAngle: CGFloat = index % 2 == 0 ? 4 : -4
-
-            essentialContainerView.transform = CGAffineTransform(rotationAngle: rotationAngle * .pi / 180)
-
-            NSLayoutConstraint.activate([
-                essentialContainerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: centerXOffset),
-                essentialContainerView.widthAnchor.constraint(equalToConstant: essentialSize),
-                essentialContainerView.heightAnchor.constraint(equalToConstant: essentialSize),
-                essentialContainerView.topAnchor.constraint(equalTo: index == 0 ? view.safeAreaLayoutGuide.topAnchor : contentView.subviews[contentView.subviews.count - 2].bottomAnchor, constant: index == 0 ? 8 : essentialSpacing),
-
-                essentialImageView.leadingAnchor.constraint(equalTo: essentialContainerView.leadingAnchor),
-                essentialImageView.trailingAnchor.constraint(equalTo: essentialContainerView.trailingAnchor),
-                essentialImageView.topAnchor.constraint(equalTo: essentialContainerView.topAnchor),
-                essentialImageView.bottomAnchor.constraint(equalTo: essentialContainerView.bottomAnchor)
-            ])
         }
     }
    
     private func setupMetaData() {
         let metadataStackView = UIStackView()
-        metadataStackView.axis = .vertical
-        metadataStackView.spacing = 8
-        metadataStackView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(metadataStackView)
+        metadataStackView.then {
+            $0.axis = .vertical
+            $0.spacing = 8
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.leading == contentView.leadingAnchor + 24
+            $0.centerY == avatarImage.centerYAnchor
+        }
 
         let artifactsStackView = createMetadataStackView(heading: "artifacts", statistic: "0")
         let soundsStackView = createMetadataStackView(heading: "sounds", statistic: "0")
@@ -216,22 +232,17 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
         metadataStackView.addArrangedSubview(soundsStackView)
         metadataStackView.addArrangedSubview(followersStackView)
 
-        NSLayoutConstraint.activate([
-            metadataStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            metadataStackView.centerYAnchor.constraint(equalTo: avatarImage.centerYAnchor)
-        ])
-        
         let spacerView = UIView()
-        spacerView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(spacerView)
-
-        NSLayoutConstraint.activate([
-            spacerView.topAnchor.constraint(equalTo: metadataStackView.bottomAnchor),
-            spacerView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            spacerView.heightAnchor.constraint(equalToConstant: 500),
-            spacerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            spacerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
+        spacerView.then {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }.layout {
+            $0.top == metadataStackView.bottomAnchor
+            $0.width == contentView.widthAnchor
+            $0.height == 500
+            $0.centerX == contentView.centerXAnchor
+            $0.bottom == contentView.bottomAnchor
+        }
     }
     
 }

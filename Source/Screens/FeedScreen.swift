@@ -99,41 +99,37 @@ extension FeedScreen {
             $0.delegate = self
             $0.delaysContentTouches = false
             $0.backgroundColor = .clear
-            
         }.layout {
             $0.leading == view.leadingAnchor
             $0.trailing == view.trailingAnchor
             $0.bottom == view.bottomAnchor
             $0.top == view.topAnchor
         }
-        
+
         blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
-
-        blurEffectView?.isUserInteractionEnabled = false
-        blurEffectView?.translatesAutoresizingMaskIntoConstraints = false
-
-        if let blurEffectView = blurEffectView {
-            collectionView.addSubview(blurEffectView)
-            
-            NSLayoutConstraint.activate([
-                blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
-                blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
+        blurEffectView?.then {
+            $0.isUserInteractionEnabled = false
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            collectionView.addSubview($0)
+        }.layout {
+            $0.leading == view.leadingAnchor
+            $0.trailing == view.trailingAnchor
+            $0.top == view.topAnchor
+            $0.bottom == view.bottomAnchor
         }
-        
+
         let dashView = UIHostingController(rootView: DashView(isLoading: Binding(
             get: { self.feedAPI.isLoading },
             set: { self.feedAPI.isLoading = $0 }
         ))).view
-         dashView?.backgroundColor = .clear
-         dashView?.translatesAutoresizingMaskIntoConstraints = false
-         collectionView.addSubview(dashView!)
-         NSLayoutConstraint.activate([
-             dashView!.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 38),
-             dashView!.topAnchor.constraint(equalTo: view.topAnchor, constant: 72),
-         ])
+        dashView?.then {
+            $0.backgroundColor = .clear
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            collectionView.addSubview($0)
+        }.layout {
+            $0.leading == view.leadingAnchor + 38
+            $0.top == view.topAnchor + 72
+        }
     }
 }
 
