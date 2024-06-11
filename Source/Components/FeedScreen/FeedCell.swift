@@ -10,6 +10,7 @@ import SwiftUI
 
 class FeedCell: UICollectionViewCell {
 
+
     // MARK: Artifact UI Properties
     
     // Art card
@@ -79,6 +80,7 @@ class FeedCell: UICollectionViewCell {
         }
         setupGesture()
     }
+
 }
 
 
@@ -299,8 +301,6 @@ extension FeedCell {
         
         // Artwork
         artImageView.do {
-//            $0.layer.borderColor = UIColor.black.cgColor
-//            $0.layer.borderWidth = 2
             $0.layer.cornerRadius = 32
             $0.layer.cornerCurve = .continuous
             $0.layer.masksToBounds = true
@@ -398,7 +398,6 @@ extension FeedCell {
     }
     
     private func setupAvatar() {
-        let borderSize: CGFloat = 1
         let avatarSize: CGFloat = 40
 
         avatarContainerView = UIView()
@@ -414,7 +413,7 @@ extension FeedCell {
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 
         avatarContainerView.addSubview(avatarImageView)
-        contentView.addSubview(avatarContainerView)
+        addSubview(avatarContainerView)
         
         NSLayoutConstraint.activate([
             avatarImageView.centerXAnchor.constraint(equalTo: avatarContainerView.centerXAnchor),
@@ -423,16 +422,38 @@ extension FeedCell {
             avatarImageView.heightAnchor.constraint(equalToConstant: avatarSize),
             
             avatarContainerView.trailingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -130),
-            avatarContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            avatarContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             avatarContainerView.widthAnchor.constraint(equalToConstant: 40),
             avatarContainerView.heightAnchor.constraint(equalToConstant: 40)
         ])
+        
+//        when avatar is tapped print something
+        let tap = UITapGestureRecognizer(target: self, action: #selector(avatarTapped))
+        avatarContainerView.addGestureRecognizer(tap)
+    }
+    
+    @objc func avatarTapped() {
+        print("Avatar tapped")
     }
 }
 
 // MARK: Gestures
 
 extension FeedCell {
+    // Allow gestures outside of the cell bounds
+    override func hitTest(_ point: CGPoint, with e: UIEvent?) -> UIView? {
+        if let result = super.hitTest(point, with:e) {
+            return result
+        }
+        for sub in self.subviews.reversed() {
+            let pt = self.convert(point, to:sub)
+            if let result = sub.hitTest(pt, with:e) {
+                return result
+            }
+        }
+        return nil
+    }
+    
     private func setupGesture() {
         // dial
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))

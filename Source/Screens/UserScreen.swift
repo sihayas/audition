@@ -9,26 +9,31 @@ import UIKit
 import SwiftUI
 
 class UserScreen: UIViewController, UIGestureRecognizerDelegate {
-    var details: User
     private var scrollView = UIScrollView()
     private var contentView = UIView()
     private var avatarImage = ImageView()
+    
     private var userData: APIUser?
+    private var userResult: UserResult?
+    private var fetchedUserData: APIUser?
 
-    init(details: User) {
-        self.details = details
+    init(userData: APIUser? = nil, userResult: UserResult? = nil) {
+        self.userData = userData
+        self.userResult = userResult
         super.init(nibName: nil, bundle: nil)
         
-        guard let userId = details.id else {
+        let userIdToFetch = userResult?.id ?? userData?.id
+        
+        guard let userIdToFetch = userIdToFetch else {
             print("User ID not available")
             return
         }
-    
+        
         // Fetch up to date data
-        UserAPI.fetchUserData(userId: userId, pageUserId: userId) { [weak self] result in
+        UserAPI.fetchUserData(userId: userIdToFetch, pageUserId: userIdToFetch) { [weak self] result in
             switch result {
             case .success(let userResponse):
-                self?.userData = userResponse.data
+                self?.fetchedUserData = userResponse.data
                 print("found user \(userResponse.data)")
             case .failure(let error):
                 print("Error fetching user data: \(error.localizedDescription)")
@@ -83,7 +88,7 @@ class UserScreen: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func setupAvatar() {
-        if let imageURL = URL(string: details.image ?? "") {
+        if let imageURL = URL(string: userData?.image ?? "") {
             avatarImage.setImage(from: imageURL)
             // Check if the image is set and then extract the dominant color
             checkImageSet {

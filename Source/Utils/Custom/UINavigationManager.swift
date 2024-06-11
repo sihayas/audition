@@ -21,8 +21,8 @@ class NavigationManager {
         navigationController?.pushViewController(soundScreen, animated: true)
     }
     
-    func navigateToUserScreen(withDetails details: User) {
-        let userScreen = UserScreen(details: details)
+    func navigateToUserScreen(withUserData userData: APIUser? = nil, withUserResult userResult: UserResult? = nil) {
+        let userScreen = UserScreen(userData: userData, userResult: userResult)
         navigationController?.pushViewController(userScreen, animated: true)
     }
 }

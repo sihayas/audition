@@ -63,6 +63,7 @@
 		CD95916C2C0960CD00B3015C /* FormArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD95916B2C0960CD00B3015C /* FormArtworkView.swift */; };
 		CDA978F62BE10CBB002F3EA6 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA978F52BE10CBB002F3EA6 /* App.swift */; };
 		CDA979C92BE12705002F3EA6 /* FeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA979C82BE12705002F3EA6 /* FeedModel.swift */; };
+		CDF287C02C17EF6100758A49 /* EntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF287BF2C17EF6100758A49 /* EntryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -124,6 +125,7 @@
 		CD95916B2C0960CD00B3015C /* FormArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormArtworkView.swift; sourceTree = "<group>"; };
 		CDA978F52BE10CBB002F3EA6 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = App.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		CDA979C82BE12705002F3EA6 /* FeedModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedModel.swift; sourceTree = "<group>"; };
+		CDF287BF2C17EF6100758A49 /* EntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,15 +183,13 @@
 		C1765B7C2A6BDBE500F65D7E /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				CD6F0B172C11703600FA67D8 /* NavBar */,
 				CD17709E2BE3CF2200C9BC8A /* AnimatedTextView.swift */,
 				CD44F6872C0516BF0021DE21 /* CircleView.swift */,
-				CD44F6882C0516BF0021DE21 /* DashView.swift */,
 				CD44F6862C0516BF0021DE21 /* DialView.swift */,
-				CD44F6892C0516BF0021DE21 /* FeedCell.swift */,
-				CD95916B2C0960CD00B3015C /* FormArtworkView.swift */,
-				C1765B9F2A6BED5000F65D7E /* ImageView */,
 				CD550AB22BE12C670070109C /* StarRatingView.swift */,
+				CDF287C22C18256600758A49 /* FeedScreen */,
+				C1765B9F2A6BED5000F65D7E /* ImageView */,
+				CD6F0B172C11703600FA67D8 /* NavBar */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -206,8 +206,8 @@
 		C1765B802A6BDC6200F65D7E /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				CDF287C12C18008A00758A49 /* Entry */,
 				CD44F6752C05167D0021DE21 /* AuthScreen.swift */,
-				CD44F6732C05167D0021DE21 /* EntryScreen.swift */,
 				CD44F6742C05167D0021DE21 /* FeedScreen.swift */,
 				CD3154882BEB02350020968E /* SearchScreen.swift */,
 				CD44F6712C05167D0021DE21 /* SoundScreen.swift */,
@@ -260,6 +260,7 @@
 		CD6F0B172C11703600FA67D8 /* NavBar */ = {
 			isa = PBXGroup;
 			children = (
+				CD95916B2C0960CD00B3015C /* FormArtworkView.swift */,
 				CD67D5132BE98F230039A5D2 /* NavBarView.swift */,
 				CD6F0B182C11706800FA67D8 /* AvatarView.swift */,
 			);
@@ -329,6 +330,24 @@
 				CD6F0B332C17A1FC00FA67D8 /* UIView+Extensions.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		CDF287C12C18008A00758A49 /* Entry */ = {
+			isa = PBXGroup;
+			children = (
+				CDF287BF2C17EF6100758A49 /* EntryView.swift */,
+				CD44F6732C05167D0021DE21 /* EntryScreen.swift */,
+			);
+			path = Entry;
+			sourceTree = "<group>";
+		};
+		CDF287C22C18256600758A49 /* FeedScreen */ = {
+			isa = PBXGroup;
+			children = (
+				CD44F6892C0516BF0021DE21 /* FeedCell.swift */,
+				CD44F6882C0516BF0021DE21 /* DashView.swift */,
+			);
+			path = FeedScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -439,6 +458,7 @@
 				CD67D4F32BE5B2C00039A5D2 /* UIColor.swift in Sources */,
 				CD6F0B452C17A1FC00FA67D8 /* UIApplication+KeyWindow.swift in Sources */,
 				CD44F6782C05167D0021DE21 /* EntryScreen.swift in Sources */,
+				CDF287C02C17EF6100758A49 /* EntryView.swift in Sources */,
 				CD6F0B192C11706800FA67D8 /* AvatarView.swift in Sources */,
 				CD550AB52BE12C670070109C /* StarRatingView.swift in Sources */,
 				CD5761CE2BFF9BC70032F347 /* vaela.xcdatamodeld in Sources */,

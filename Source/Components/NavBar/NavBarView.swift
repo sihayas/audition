@@ -451,7 +451,7 @@ extension NavBar {
         user.image = image.trimmingCharacters(in: .whitespacesAndNewlines)
         user.image = image.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
 
-        NavigationManager.shared.navigateToUserScreen(withDetails: user)
+//        NavigationManager.shared.navigateToUserScreen(withUserData: user)
     }
     
     // Rating dial

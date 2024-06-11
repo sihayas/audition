@@ -20,7 +20,6 @@ class FeedAPI: ObservableObject {
         isLoading = true
         
         let urlString = "http://192.168.1.249:8000/api/feed?page=\(currentPage)&userId=\(userId)"
-        print("URL String: \(urlString)")
         
         guard let url = URL(string: urlString) else {
             print("Error: Invalid URL")
@@ -28,8 +27,6 @@ class FeedAPI: ObservableObject {
             canLoadMore = false
             return
         }
-        
-        print("Sending API request to: \(url)")
         
         APIClient.shared.sendRequest(url: url) { [weak self] (result: Result<APIFeedResponse, Error>) in
             DispatchQueue.main.async {

@@ -16,6 +16,7 @@ struct SearchScreen: View {
     private func dismissSheet() {
           presentationMode.wrappedValue.dismiss()
       }
+    
     var body: some View {
         ZStack {
             BlurredBackground()

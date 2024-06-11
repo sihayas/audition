@@ -23,7 +23,7 @@ class FeedScreen: UIViewController {
     // MARK: Constants
     private enum Constants {
         static let lineSpacing: CGFloat = 128
-        static let sectionInset: UIEdgeInsets = .init(top: 0, left: 214 - 48, bottom: 0, right: 0)
+        static let sectionInset: UIEdgeInsets = .init(top: 40, left: 214 - 48, bottom: 0, right: 0)
     }
     
     // MARK: Typealiases
@@ -78,17 +78,8 @@ extension FeedScreen {
     private func observeEntries() {
         feedAPI.$entries.sink { [weak self] newEntries in
             self?.entries = newEntries
-//            self?.printEntries(newEntries)
         }.store(in: &cancellables)
     }
-
-//    private func printEntries(_ entries: [APIEntry]) {
-//        print("Received entries:")
-//        for entry in entries {
-//            print("- \(entry)")
-//        }
-//    }
-
     
     private func observeLoading() {
         feedAPI.$isLoading
@@ -97,6 +88,8 @@ extension FeedScreen {
             }
             .store(in: &cancellables)
     }
+    
+
 
     private func setupCollectionView() {
         collectionView.then {
@@ -120,9 +113,6 @@ extension FeedScreen {
         blurEffectView?.translatesAutoresizingMaskIntoConstraints = false
 
         if let blurEffectView = blurEffectView {
-//            if let vfxSubView = blurEffectView.subviews.first(where: { String(describing: type(of: $0)) == "_UIVisualEffectBackdropView" }) {
-//                vfxSubView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-//            }
             collectionView.addSubview(blurEffectView)
             
             NSLayoutConstraint.activate([
@@ -161,6 +151,7 @@ extension FeedScreen {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FeedCell", for: indexPath) as? FeedCell else {
                 fatalError("Cannot create new cell")
             }
+            
             // Create the entry card
             cell.setup(with: entry)
             cell.layer.zPosition = 1
